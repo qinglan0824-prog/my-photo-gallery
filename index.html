@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>STELLE SCINTILLANTI - Photography Exhibition</title>
+    <!-- 引入高奢感现代无衬线字体 Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-color: #f7f6f2;
@@ -24,7 +26,7 @@
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
-            font-family: -apple-system, BlinkMacSystemFont, "Cinzel", "Times New Roman", "Songti SC", serif;
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
@@ -40,17 +42,19 @@
             z-index: 1;
         }
 
+        /* 优化自定义光标，确保在黑白背景下都清晰可见 */
         #customCursor {
             position: fixed;
-            width: 8px;
-            height: 8px;
-            background: #1a1a1a;
+            width: 10px;
+            height: 10px;
+            background: rgba(247, 246, 242, 0.9);
+            border: 1px solid rgba(26, 26, 26, 0.4);
             border-radius: 50%;
             pointer-events: none;
             transform: translate(-50%, -50%);
-            transition: transform 0.15s ease-out, width 0.2s, height 0.2s, background-color 0.2s;
+            transition: transform 0.1s ease-out, width 0.2s, height 0.2s, background-color 0.2s;
             z-index: 9999;
-            mix-blend-mode: difference;
+            box-shadow: 0 0 10px rgba(0,0,0,0.15);
         }
 
         /* 顶部导航 */
@@ -64,24 +68,24 @@
             justify-content: flex-end;
             align-items: center;
             z-index: 100;
-            mix-blend-mode: difference;
-            color: #fff;
         }
 
         .bgm-btn {
-            background: none;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            padding: 0.4rem 1.2rem;
-            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1.4rem;
+            border-radius: 30px;
             color: #fff;
+            font-family: 'Montserrat', sans-serif;
             font-size: 0.7rem;
             letter-spacing: 0.15em;
             transition: all 0.3s ease;
         }
 
         .bgm-btn:hover {
-            border-color: #fff;
-            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.8);
+            background: rgba(0, 0, 0, 0.4);
         }
 
         /* 1. 首屏全屏海报 */
@@ -106,7 +110,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.45);
+            background: rgba(0, 0, 0, 0.4);
         }
 
         .hero-content {
@@ -115,21 +119,21 @@
             text-align: center;
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 1.2rem;
         }
 
         .hero-title {
             color: #ffffff;
-            font-size: 3.2rem;
-            font-weight: 300;
-            letter-spacing: 0.35em;
+            font-size: 3.5rem;
+            font-weight: 200;
+            letter-spacing: 0.4em;
             text-transform: uppercase;
         }
 
         .hero-subtitle {
-            color: rgba(255, 255, 255, 0.65);
-            font-size: 0.8rem;
-            letter-spacing: 0.4em;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            letter-spacing: 0.5em;
             text-transform: uppercase;
         }
 
@@ -152,7 +156,7 @@
             60% { transform: translate(-50%, -3px); }
         }
 
-        /* 2. 主体双栏布局：左侧黑底索引栏 + 右侧内容区 */
+        /* 2. 主体双栏布局 */
         .main-layout {
             position: relative;
             z-index: 2;
@@ -186,12 +190,13 @@
         }
 
         .sidebar-brand {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             letter-spacing: 0.25em;
             text-transform: uppercase;
             color: #fff;
             border-bottom: 1px solid #222;
             padding-bottom: 1rem;
+            font-weight: 300;
         }
 
         .filter-group {
@@ -201,7 +206,7 @@
         }
 
         .filter-title {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             letter-spacing: 0.2em;
             color: #666;
             text-transform: uppercase;
@@ -211,12 +216,13 @@
         .filter-item {
             font-size: 0.75rem;
             letter-spacing: 0.15em;
-            color: #aaa;
+            color: #999;
             background: none;
             border: none;
             text-align: left;
             padding: 0.2rem 0;
             transition: color 0.3s;
+            font-family: 'Montserrat', sans-serif;
         }
 
         .filter-item:hover, .filter-item.active {
@@ -235,12 +241,13 @@
 
         .month-btn {
             font-size: 0.7rem;
-            color: #777;
+            color: #666;
             background: none;
             border: none;
             letter-spacing: 0.1em;
             padding: 0.1rem 0.3rem;
             transition: color 0.2s;
+            font-family: 'Montserrat', sans-serif;
         }
 
         .month-btn:hover, .month-btn.active {
@@ -248,8 +255,8 @@
         }
 
         .sidebar-footer {
-            font-size: 0.65rem;
-            color: #555;
+            font-size: 0.6rem;
+            color: #444;
             letter-spacing: 0.1em;
         }
 
@@ -261,7 +268,7 @@
         }
 
         .section-header-title {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             letter-spacing: 0.3em;
             color: var(--text-sub);
             text-transform: uppercase;
@@ -269,9 +276,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-weight: 400;
         }
 
-        /* 瀑布流筛选结果区 */
+        /* 瀑布流结果区 */
         .masonry-grid {
             columns: 2;
             column-gap: 3rem;
@@ -303,18 +311,17 @@
             margin-top: 0.8rem;
             display: flex;
             justify-content: space-between;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             letter-spacing: 0.15em;
             color: var(--text-sub);
         }
 
-        /* 札记 (Journals) 区：左侧时间轴 + 右侧精准明信片 */
+        /* 札记 (Journals) 区 */
         .journals-section {
             position: relative;
             padding-left: 3rem;
         }
 
-        /* 左侧时间轴细竖线 */
         .journals-section::before {
             content: '';
             position: absolute;
@@ -330,7 +337,6 @@
             margin-bottom: 10rem;
         }
 
-        /* 时间轴上的圆点标记 */
         .timeline-dot {
             position: absolute;
             left: -3rem;
@@ -347,20 +353,19 @@
             left: -3rem;
             top: 2.8rem;
             transform: translateX(-50%) rotate(-90deg);
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             letter-spacing: 0.2em;
             color: var(--text-sub);
             text-transform: uppercase;
         }
 
-        /* 明信片大卡片：更窄的边框、严格对称、加粗黑细边框 */
         .postcard-frame {
             background-color: var(--card-bg);
-            border: 1px solid #1a1a1a; /* 更细更有质感的黑细边框 */
+            border: 1px solid #1a1a1a;
             padding: 1rem;
             box-shadow: 0 15px 40px rgba(0,0,0,0.03);
             width: 90%;
-            margin-left: auto; /* 保证右侧视觉留白 */
+            margin-left: auto;
             transition: transform 0.5s ease;
         }
 
@@ -381,7 +386,6 @@
             object-fit: cover;
         }
 
-        /* 明信片底部更长、更细腻的文字备注区 */
         .postcard-footer {
             margin-top: 1.2rem;
             padding-top: 0.8rem;
@@ -393,7 +397,7 @@
         }
 
         .postcard-note {
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             letter-spacing: 0.1em;
             color: #444;
             line-height: 1.6;
@@ -405,7 +409,7 @@
             flex-direction: column;
             align-items: flex-end;
             gap: 0.3rem;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             letter-spacing: 0.15em;
             color: var(--text-sub);
             flex-shrink: 0;
@@ -416,7 +420,7 @@
             font-weight: 500;
         }
 
-        /* 灯箱大图预览弹窗 */
+        /* 灯箱大图预览 */
         #lightbox {
             position: fixed;
             top: 0;
@@ -477,14 +481,12 @@
             <div class="sidebar-top">
                 <div class="sidebar-brand">STELLE SCINTILLANTI</div>
 
-                <!-- 时间索引 -->
                 <div class="filter-group">
                     <div class="filter-title">CHRONOLOGY</div>
                     <button class="filter-item active" onclick="filterAll()">All Archives</button>
                     <div id="yearFilterContainer"></div>
                 </div>
 
-                <!-- 地点索引 -->
                 <div class="filter-group" style="margin-top: 1rem;">
                     <div class="filter-title">LOCATIONS</div>
                     <div id="locationFilterContainer"></div>
@@ -492,21 +494,19 @@
             </div>
 
             <div class="sidebar-footer">
-                © 2026 STELLE SCINTILLANTI. ALL RIGHTS RESERVED.
+                © 2026 STELLE SCINTILLANTI
             </div>
         </aside>
 
         <!-- 右侧内容动态呈现区 -->
         <main class="content-area">
             <div id="dynamicView">
-                <!-- 动态筛选结果或全量瀑布流 -->
                 <div class="section-header-title">
                     <span id="viewTitle">ARCHIVE COLLECTION</span>
                     <span id="viewCount">0 items</span>
                 </div>
                 <div class="masonry-grid" id="masonryContainer"></div>
 
-                <!-- 札记 Journals 区 (仅展示标记为 journal: true 的横版图) -->
                 <div class="section-header-title" style="margin-top: 8rem;">
                     <span>JOURNALS & NOTES</span>
                 </div>
@@ -524,7 +524,7 @@
         let allData = [];
         let activeYear = null;
 
-        // 光标交互
+        // 光标跟随
         const cursor = document.getElementById('customCursor');
         document.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px';
@@ -535,11 +535,11 @@
             if (e.target.tagName === 'BUTTON' || e.target.closest('.masonry-item') || e.target.closest('.postcard-frame')) {
                 cursor.style.width = '24px';
                 cursor.style.height = '24px';
-                cursor.style.backgroundColor = 'rgba(255,255,255,0.2)';
+                cursor.style.backgroundColor = 'rgba(255,255,255,0.3)';
             } else {
-                cursor.style.width = '8px';
-                cursor.style.height = '8px';
-                cursor.style.backgroundColor = '#1a1a1a';
+                cursor.style.width = '10px';
+                cursor.style.height = '10px';
+                cursor.style.backgroundColor = 'rgba(247, 246, 242, 0.9)';
             }
         });
 
@@ -581,13 +581,12 @@
         }
         animateParticles();
 
-        // 核心数据加载与渲染
+        // 加载数据与渲染
         async function initGallery() {
             try {
                 const res = await fetch('data.json');
                 allData = await res.json();
 
-                // 1. 首屏随机背景：从标记为 journal 的图片中随机抽取
                 const journalPool = allData.filter(item => item.journal);
                 const randomPool = journalPool.length > 0 ? journalPool : allData;
                 if (randomPool.length > 0) {
@@ -595,10 +594,7 @@
                     document.getElementById('heroSection').style.backgroundImage = `url('${heroPhoto.url}')`;
                 }
 
-                // 2. 渲染左侧索引结构
                 buildSidebarFilters();
-
-                // 3. 默认渲染全量瀑布流与札记区
                 renderMasonry(allData, "ALL ARCHIVES");
                 renderJournals(journalPool.length > 0 ? journalPool : allData);
 
@@ -607,9 +603,7 @@
             }
         }
 
-        // 构建侧边栏动态菜单
         function buildSidebarFilters() {
-            // 年份与月份归纳
             const yearMap = {};
             const locations = new Set();
 
@@ -622,22 +616,18 @@
                 if (item.location) locations.add(item.location);
             });
 
-            // 渲染年份
             const yearContainer = document.getElementById('yearFilterContainer');
             yearContainer.innerHTML = '';
             Object.keys(yearMap).sort().reverse().forEach(year => {
                 const wrapper = document.createElement('div');
-                
                 const yBtn = document.createElement('button');
                 yBtn.className = 'filter-item';
                 yBtn.innerText = year;
                 yBtn.onclick = () => toggleYear(year, Array.from(yearMap[year]).sort(), wrapper);
                 wrapper.appendChild(yBtn);
-
                 yearContainer.appendChild(wrapper);
             });
 
-            // 渲染地点
             const locContainer = document.getElementById('locationFilterContainer');
             locContainer.innerHTML = '';
             locations.forEach(loc => {
@@ -649,7 +639,6 @@
             });
         }
 
-        // 切换年份展开（单年份展开，其他自动收回）
         function toggleYear(year, months, wrapperElement) {
             document.querySelectorAll('.filter-item').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.sub-months').forEach(el => el.remove());
@@ -657,7 +646,6 @@
             activeYear = year;
             event.target.classList.add('active');
 
-            // 展开当前年份的月份
             const subDiv = document.createElement('div');
             subDiv.className = 'sub-months';
 
@@ -678,7 +666,6 @@
             filterByYear(year);
         }
 
-        // 筛选逻辑函数
         function filterAll() {
             document.querySelectorAll('.filter-item, .month-btn').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.sub-months').forEach(el => el.remove());
@@ -709,7 +696,6 @@
             renderMasonry(filtered, `LOCATION: ${loc}`);
         }
 
-        // 渲染右侧瀑布流
         function renderMasonry(dataArray, titleText) {
             document.getElementById('viewTitle').innerText = titleText;
             document.getElementById('viewCount').innerText = `${dataArray.length} items`;
@@ -731,7 +717,6 @@
             });
         }
 
-        // 渲染札记区（时间轴 + 精修明信片）
         function renderJournals(journalData) {
             const container = document.getElementById('journalsContainer');
             container.innerHTML = '';
@@ -739,6 +724,10 @@
             journalData.forEach(item => {
                 const wrapper = document.createElement('div');
                 wrapper.className = 'journal-card-wrapper';
+                
+                // 只有当 note 有内容时才渲染文字备注部分
+                let noteHtml = item.note ? `<p class="postcard-note">"${item.note}"</p>` : '';
+
                 wrapper.innerHTML = `
                     <div class="timeline-dot"></div>
                     <div class="timeline-label">${item.date}</div>
@@ -746,8 +735,8 @@
                         <div class="postcard-img-container">
                             <img src="${item.url}" alt="${item.location}" onclick="openLightbox('${item.url}')">
                         </div>
-                        <div class="postcard-footer">
-                            <p class="postcard-note">"${item.note || '记录片刻的视觉与心境...'}"</p>
+                        <div class="postcard-footer" ${!item.note ? 'style="border-top:none; margin-top:0.8rem;"' : ''}>
+                            ${noteHtml}
                             <div class="postcard-info">
                                 <span class="info-loc">${item.location}</span>
                                 <span>${item.date}</span>
@@ -759,7 +748,6 @@
             });
         }
 
-        // 灯箱大图控制
         function openLightbox(url) {
             const box = document.getElementById('lightbox');
             const img = document.getElementById('lightboxImg');
@@ -778,7 +766,7 @@
             bgmToggle.onclick = () => {
                 if (audio.paused) {
                     audio.play().then(() => {
-                        bgmToggle.innerText = "SOUND: ON [Kan R. Gao]";
+                        bgmToggle.innerText = "SOUND: ON [Kan R. Gao - Born a Stranger]";
                     }).catch(e => console.error(e));
                 } else {
                     audio.pause();
