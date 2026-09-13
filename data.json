@@ -7,7 +7,7 @@
     "year": "2023",
     "month": "07",
     "journal": true,
-    "note": ""
+    "note": "是不是也有点像狮子！"
   },
   {
     "id": 2,
@@ -18,8 +18,8 @@
     "month": "07",
     "journal": false,
     "note": ""
-  }
-    {
+  },
+  {
     "id": 3,
     "url": "photos/retouch_2023072800103797-2.jpg",
     "location": "六安",
