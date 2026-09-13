@@ -8,11 +8,11 @@
     <style>
         :root {
             --bg-color: #0b0b0b;
-            --sidebar-bg: #050505;
+            --sidebar-bg: #030303;
             --text-main: #f0ebe1;
             --text-sub: #7a756b;
             --accent-bronze: #c5a059;
-            --border-color: #1f1f1f;
+            --border-color: #1a1a1a;
         }
 
         * {
@@ -55,7 +55,7 @@
             box-shadow: 0 0 12px rgba(197,160,89,0.4);
         }
 
-        /* 顶部音乐按钮（滚动后自动淡出隐藏） */
+        /* 顶部音乐按钮 */
         header {
             position: fixed;
             top: 0;
@@ -90,7 +90,7 @@
             box-shadow: 0 0 20px rgba(197,160,89,0.2);
         }
 
-        /* 首屏全屏海报 */
+        /* 首屏海报 */
         .hero-section {
             position: relative;
             width: 100vw;
@@ -99,7 +99,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background-color: #050505;
+            background-color: #030303;
             background-size: cover;
             background-position: center;
             transition: background-image 1.2s cubic-bezier(0.25, 1, 0.5, 1);
@@ -112,7 +112,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(to bottom, rgba(5,5,5,0.3), rgba(11,11,11,0.95));
+            background: linear-gradient(to bottom, rgba(3,3,3,0.3), rgba(11,11,11,0.95));
         }
 
         .hero-content {
@@ -122,7 +122,6 @@
             display: flex;
             flex-direction: column;
             gap: 1.2rem;
-            animation: fadeInDown 1.5s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         .hero-title {
@@ -159,11 +158,6 @@
             60% { transform: translate(-50%, -4px); }
         }
 
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
         /* 双栏布局 */
         .main-layout {
             position: relative;
@@ -172,7 +166,7 @@
             min-height: 100vh;
         }
 
-        /* 左侧固定索引栏与阴影边界 */
+        /* 左侧固定索引栏：增强立体阴影边界，使其与右侧明显区分 */
         .sidebar {
             width: 300px;
             background-color: var(--sidebar-bg);
@@ -186,7 +180,8 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            box-shadow: 15px 0 35px rgba(0, 0, 0, 0.7);
+            box-shadow: 25px 0 50px rgba(0, 0, 0, 0.95), 5px 0 15px rgba(0,0,0,0.8);
+            border-right: 1px solid rgba(197, 160, 89, 0.15);
             z-index: 10;
         }
 
@@ -199,7 +194,6 @@
             gap: 2.5rem;
         }
 
-        /* 金铜色高定名字 */
         .sidebar-brand {
             font-size: 0.85rem;
             letter-spacing: 0.25em;
@@ -213,7 +207,7 @@
         .filter-group {
             display: flex;
             flex-direction: column;
-            gap: 0.6rem;
+            gap: 0.5rem;
         }
 
         .filter-title {
@@ -237,11 +231,10 @@
         }
 
         .filter-item:hover, .filter-item.active {
-            color: #fff;
+            color: var(--accent-bronze);
             transform: translateX(4px);
         }
 
-        /* 年份展开后的月份样式：纯数字 01 02 */
         .sub-months {
             display: flex;
             flex-wrap: wrap;
@@ -276,14 +269,8 @@
         /* 右侧展区铺满 */
         .content-area {
             flex: 1;
-            padding: 5rem 5rem 10rem 6rem;
-            max-width: 1600px;
-            animation: fadeIn 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            padding: 5rem 6rem 12rem 7rem;
+            max-width: 1700px;
         }
 
         .section-header-title {
@@ -291,82 +278,65 @@
             letter-spacing: 0.35em;
             color: var(--text-sub);
             text-transform: uppercase;
-            margin-bottom: 4rem;
+            margin-bottom: 3.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-weight: 400;
         }
 
-        /* 更有错落感的瀑布流容器 */
+        /* 瀑布流区：缩小缩略图尺寸，减小图片间距，移除文字和边框 */
         .masonry-grid {
-            columns: 2;
-            column-gap: 3.5rem;
+            columns: 3;
+            column-gap: 2rem;
         }
 
         .masonry-item {
             break-inside: avoid;
-            margin-bottom: 3.5rem;
-            background: #141414;
-            padding: 0;
-            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.5s ease;
+            margin-bottom: 2rem;
+            background: transparent;
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* 游标未滑到时的低饱和度/暗调沉浸效果 */
         .masonry-img {
             width: 100%;
             height: auto;
             display: block;
             object-fit: cover;
-            filter: grayscale(40%) brightness(0.65) contrast(0.95);
-            transition: filter 0.6s cubic-bezier(0.25, 1, 0.5, 1), transform 0.6s ease;
+            filter: grayscale(40%) brightness(0.7);
+            transition: filter 0.5s ease, transform 0.5s ease;
         }
 
         .masonry-item:hover .masonry-img {
-            filter: grayscale(0%) brightness(1) contrast(1);
-            transform: scale(1.01);
+            filter: grayscale(0%) brightness(1);
+            transform: scale(1.015);
         }
 
-        .masonry-item:hover {
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-        }
-
-        .masonry-meta {
-            margin-top: 1rem;
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.65rem;
-            letter-spacing: 0.15em;
-            color: var(--text-sub);
-            padding: 0 0.2rem;
-        }
-
-        /* 札记 (Journals) 独立展厅区 */
+        /* 独立札记展厅：放大尺寸，米白色边框，常亮全彩 */
         .journals-section {
             position: relative;
-            padding-left: 3.5rem;
+            padding-left: 5rem; /* 竖线向右移一点点 */
         }
 
         .journals-section::before {
             content: '';
             position: absolute;
-            left: 0;
+            left: 1.5rem; /* 竖线位置调整 */
             top: 1rem;
             bottom: 1rem;
             width: 1px;
-            background-color: #222;
+            background-color: #2a2a2a;
         }
 
         .journal-card-wrapper {
             position: relative;
-            margin-bottom: 9rem;
+            margin-bottom: 10rem;
         }
 
-        /* 时间轴圆点 */
         .timeline-dot {
             position: absolute;
-            left: -3.5rem;
-            top: 1.5rem;
+            left: 1.5rem; /* 与竖线完美重合 */
+            top: 2rem;
             width: 7px;
             height: 7px;
             background-color: var(--accent-bronze);
@@ -375,37 +345,36 @@
             box-shadow: 0 0 8px var(--accent-bronze);
         }
 
-        /* 时间文字在圆点左下角横向显示，不压线 */
+        /* 时间戳往左边一点点错开，且不与线重合 */
         .timeline-label {
             position: absolute;
-            left: -6.5rem;
-            top: 2.5rem;
-            font-size: 0.6rem;
+            left: -3.5rem;
+            top: 2.8rem;
+            font-size: 0.65rem;
             letter-spacing: 0.15em;
             color: var(--text-sub);
             white-space: nowrap;
         }
 
-        /* 札记卡片 */
+        /* 明信片框：米白色 #f7f6f2，整体加大 */
         .postcard-frame {
-            background-color: #121212;
-            border: 1px solid #222;
-            padding: 1.2rem;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-            width: 85%;
+            background-color: #f7f6f2;
+            border: 1px solid #e2dfd8;
+            padding: 1.8rem;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+            width: 92%;
             margin-left: auto;
             transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         .postcard-frame:hover {
-            transform: translateY(-4px);
-            border-color: #333;
+            transform: translateY(-5px);
         }
 
         .postcard-img-container {
             width: 100%;
             overflow: hidden;
-            background: #0a0a0a;
+            background: #eee;
         }
 
         .postcard-img-container img {
@@ -413,18 +382,13 @@
             height: auto;
             display: block;
             object-fit: cover;
-            filter: grayscale(30%) brightness(0.7);
-            transition: filter 0.6s ease;
-        }
-
-        .postcard-frame:hover .postcard-img-container img {
-            filter: grayscale(0%) brightness(1);
+            filter: none; /* 常亮全彩 */
         }
 
         .postcard-footer {
-            margin-top: 1.2rem;
+            margin-top: 1.5rem;
             padding-top: 1rem;
-            border-top: 1px solid #1c1c1c;
+            border-top: 1px solid #ddd;
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
@@ -432,10 +396,10 @@
         }
 
         .postcard-note {
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             letter-spacing: 0.1em;
-            color: #b5ada0;
-            line-height: 1.6;
+            color: #2c2a29;
+            line-height: 1.7;
             font-style: italic;
         }
 
@@ -444,26 +408,26 @@
             flex-direction: column;
             align-items: flex-end;
             gap: 0.3rem;
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             letter-spacing: 0.15em;
-            color: var(--text-sub);
+            color: #7a756b;
             flex-shrink: 0;
         }
 
         .info-loc {
-            color: var(--text-main);
+            color: #1a1a1a;
             font-weight: 500;
         }
 
-        /* 灯箱大图预览与连续切换控件 */
+        /* 灯箱大图预览 */
         #lightbox {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(5, 5, 5, 0.95);
-            backdrop-filter: blur(10px);
+            background: rgba(3, 3, 3, 0.96);
+            backdrop-filter: blur(12px);
             display: none;
             justify-content: center;
             align-items: center;
@@ -475,7 +439,7 @@
             max-width: 85vw;
             max-height: 85vh;
             object-fit: contain;
-            box-shadow: 0 30px 80px rgba(0,0,0,0.8);
+            box-shadow: 0 30px 90px rgba(0,0,0,0.9);
             animation: zoomIn 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
@@ -503,7 +467,7 @@
 
         @media (max-width: 1024px) {
             .main-layout { flex-direction: column; }
-            .sidebar { width: 100%; height: auto; position: relative; box-shadow: none; border-bottom: 1px solid #222; }
+            .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid #222; }
             .content-area { padding: 3rem 2rem; }
             .masonry-grid { columns: 1; }
             .postcard-frame { width: 100%; }
@@ -542,7 +506,7 @@
 
                 <div class="filter-group">
                     <div class="filter-title">ARCHIVES</div>
-                    <button class="filter-item active" onclick="switchView('all')">All Works</button>
+                    <button class="filter-item active" id="allWorksBtn" onclick="resetAllFilters()">All Works</button>
                     <div id="yearFilterContainer"></div>
                 </div>
 
@@ -553,7 +517,7 @@
 
                 <div class="filter-group" style="margin-top: 1.2rem;">
                     <div class="filter-title">EXHIBITION</div>
-                    <button class="filter-item" onclick="switchView('journals')">Journals & Notes</button>
+                    <button class="filter-item" id="journalsViewBtn" onclick="switchViewToJournals()">Journals & Notes</button>
                 </div>
             </div>
 
@@ -577,15 +541,15 @@
 
     <script>
         let allData = [];
-        let currentViewMode = 'all'; // 'all', 'year', 'month', 'location', 'journals'
-        let currentFilterParam = null;
-        let currentSubParam = null;
+        let selectedYear = null;
+        let selectedMonth = null;
+        let selectedLocation = null;
+        let isJournalsView = false;
         
         let lightboxImages = [];
         let lightboxCurrentIndex = 0;
 
-        // 滚动时隐藏/显示 BGM 按钮
-        let lastScrollTop = 0;
+        // 滚动隐藏 BGM 按钮
         window.addEventListener('scroll', () => {
             const header = document.getElementById('siteHeader');
             let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -596,7 +560,7 @@
             }
         });
 
-        // 光标交互
+        // 光标跟随
         const cursor = document.getElementById('customCursor');
         document.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px';
@@ -653,7 +617,6 @@
         }
         animateParticles();
 
-        // 初始化加载数据
         async function initGallery() {
             try {
                 const res = await fetch('data.json');
@@ -672,7 +635,7 @@
             }
         }
 
-        // 构建侧边栏双重索引
+        // 构建侧边栏双重索引联动
         function buildSidebarFilters() {
             const yearMap = {};
             const locations = new Set();
@@ -686,48 +649,70 @@
                 if (item.location) locations.add(item.location);
             });
 
-            // 年份渲染
+            // 年份
             const yearContainer = document.getElementById('yearFilterContainer');
             yearContainer.innerHTML = '';
             Object.keys(yearMap).sort().reverse().forEach(year => {
                 const wrapper = document.createElement('div');
                 const yBtn = document.createElement('button');
-                yBtn.className = 'filter-item';
+                yBtn.className = 'filter-item year-btn-' + year;
                 yBtn.innerText = year;
-                yBtn.onclick = () => toggleYearMenu(year, Array.from(yearMap[year]).sort(), wrapper);
+                yBtn.onclick = () => toggleYear(year, Array.from(yearMap[year]).sort(), wrapper);
                 wrapper.appendChild(yBtn);
                 yearContainer.appendChild(wrapper);
             });
 
-            // 地点渲染（独立一行）
+            // 地点（单独一行）
             const locContainer = document.getElementById('locationFilterContainer');
             locContainer.innerHTML = '';
             locations.forEach(loc => {
                 const lBtn = document.createElement('button');
-                lBtn.className = 'filter-item';
+                lBtn.className = 'filter-item loc-btn';
                 lBtn.style.display = 'block';
                 lBtn.style.width = '100%';
                 lBtn.innerText = loc;
                 lBtn.onclick = () => {
-                    document.querySelectorAll('.filter-item, .month-btn').forEach(el => el.classList.remove('active'));
-                    lBtn.classList.add('active');
-                    currentViewMode = 'location';
-                    currentFilterParam = loc;
-                    currentSubParam = null;
+                    isJournalsView = false;
+                    document.getElementById('journalsViewBtn').classList.remove('active');
+                    document.getElementById('allWorksBtn').classList.remove('active');
+
+                    // 再次点击取消选择
+                    if (selectedLocation === loc) {
+                        selectedLocation = null;
+                        lBtn.classList.remove('active');
+                    } else {
+                        document.querySelectorAll('.loc-btn').forEach(b => b.classList.remove('active'));
+                        selectedLocation = loc;
+                        lBtn.classList.add('active');
+                    }
                     renderContent();
                 };
                 locContainer.appendChild(lBtn);
             });
         }
 
-        function toggleYearMenu(year, months, wrapperElement) {
+        function toggleYear(year, months, wrapperElement) {
+            isJournalsView = false;
+            document.getElementById('journalsViewBtn').classList.remove('active');
+            document.getElementById('allWorksBtn').classList.remove('active');
+
+            // 如果点击已选中的年份，则取消年份和月份
+            if (selectedYear === year) {
+                selectedYear = null;
+                selectedMonth = null;
+                wrapperElement.querySelectorAll('.filter-item').forEach(el => el.classList.remove('active'));
+                const sub = wrapperElement.querySelector('.sub-months');
+                if (sub) sub.remove();
+                renderContent();
+                return;
+            }
+
             document.querySelectorAll('.filter-item').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.sub-months').forEach(el => el.remove());
 
-            event.target.classList.add('active');
-            currentViewMode = 'year';
-            currentFilterParam = year;
-            currentSubParam = null;
+            selectedYear = year;
+            selectedMonth = null;
+            wrapperElement.querySelector('.filter-item').classList.add('active');
 
             const subDiv = document.createElement('div');
             subDiv.className = 'sub-months';
@@ -735,13 +720,17 @@
             months.forEach(m => {
                 const mBtn = document.createElement('button');
                 mBtn.className = 'month-btn';
-                mBtn.innerText = m; // 直接显示 01, 02 不带年份
+                mBtn.innerText = m; // 只显示 01, 02
                 mBtn.onclick = (e) => {
                     e.stopPropagation();
-                    document.querySelectorAll('.month-btn').forEach(b => b.classList.remove('active'));
-                    mBtn.classList.add('active');
-                    currentViewMode = 'month';
-                    currentSubParam = m;
+                    if (selectedMonth === m) {
+                        selectedMonth = null;
+                        mBtn.classList.remove('active');
+                    } else {
+                        document.querySelectorAll('.month-btn').forEach(b => b.classList.remove('active'));
+                        selectedMonth = m;
+                        mBtn.classList.add('active');
+                    }
                     renderContent();
                 };
                 subDiv.appendChild(mBtn);
@@ -751,46 +740,60 @@
             renderContent();
         }
 
-        function switchView(mode) {
+        function resetAllFilters() {
+            isJournalsView = false;
+            selectedYear = null;
+            selectedMonth = null;
+            selectedLocation = null;
+
             document.querySelectorAll('.filter-item, .month-btn').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.sub-months').forEach(el => el.remove());
-            event.target.classList.add('active');
-
-            currentViewMode = mode;
-            currentFilterParam = null;
-            currentSubParam = null;
+            document.getElementById('allWorksBtn').classList.add('active');
             renderContent();
         }
 
-        // 根据当前状态核心渲染右侧
+        function switchViewToJournals() {
+            isJournalsView = true;
+            document.querySelectorAll('.filter-item, .month-btn').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.sub-months').forEach(el => el.remove());
+            document.getElementById('journalsViewBtn').classList.add('active');
+            renderContent();
+        }
+
+        // 双重索引组合过滤渲染
         function renderContent() {
             const container = document.getElementById('contentArea');
             container.innerHTML = '';
 
-            let filteredData = allData;
-            let titleText = "ALL ARCHIVES";
-
-            if (currentViewMode === 'year') {
-                filteredData = allData.filter(item => (item.year || item.date.split('.')[0]) === currentFilterParam);
-                titleText = `CHRONOLOGY: ${currentFilterParam}`;
-            } else if (currentViewMode === 'month') {
-                filteredData = allData.filter(item => {
-                    const y = item.year || item.date.split('.')[0];
-                    const m = item.month || item.date.split('.')[1];
-                    return y === currentFilterParam && m === currentSubParam;
-                });
-                titleText = `PERIOD: ${currentFilterParam}.${currentSubParam}`;
-            } else if (currentViewMode === 'location') {
-                filteredData = allData.filter(item => item.location === currentFilterParam);
-                titleText = `LOCATION: ${currentFilterParam}`;
-            } else if (currentViewMode === 'journals') {
+            if (isJournalsView) {
                 renderJournalsView(container);
                 return;
             }
 
-            // 渲染瀑布流视窗
+            let filteredData = allData;
+            let titleText = "ALL ARCHIVES";
+
+            // 时间过滤
+            if (selectedYear) {
+                filteredData = filteredData.filter(item => (item.year || item.date.split('.')[0]) === selectedYear);
+                titleText = `CHRONOLOGY: ${selectedYear}`;
+            }
+            if (selectedMonth) {
+                filteredData = filteredData.filter(item => {
+                    const m = item.month || item.date.split('.')[1];
+                    return m === selectedMonth;
+                });
+                titleText = `PERIOD: ${selectedYear}.${selectedMonth}`;
+            }
+
+            // 地点双重叠加过滤
+            if (selectedLocation) {
+                filteredData = filteredData.filter(item => item.location === selectedLocation);
+                titleText += ` / LOCATION: ${selectedLocation}`;
+            }
+
             lightboxImages = filteredData.map(i => i.url);
-            
+
             const headerDiv = document.createElement('div');
             headerDiv.className = 'section-header-title';
             headerDiv.innerHTML = `<span>${titleText}</span><span>${filteredData.length} items</span>`;
@@ -802,19 +805,16 @@
             filteredData.forEach((item, index) => {
                 const itemDiv = document.createElement('div');
                 itemDiv.className = 'masonry-item';
+                // 瀑布流纯净照片，无需底部时间和地点
                 itemDiv.innerHTML = `
                     <img src="${item.url}" alt="${item.location}" class="masonry-img" onclick="openLightbox(${index})">
-                    <div class="masonry-meta">
-                        <span>${item.location}</span>
-                        <span>${item.date}</span>
-                    </div>
                 `;
                 gridDiv.appendChild(itemDiv);
             });
             container.appendChild(gridDiv);
         }
 
-        // 渲染独立札记展厅
+        // 札记区渲染（同一月份只显示一次时间戳）
         function renderJournalsView(container) {
             const journalData = allData.filter(item => item.journal);
             lightboxImages = journalData.map(i => i.url);
@@ -827,15 +827,23 @@
             const section = document.createElement('section');
             section.className = 'journals-section';
 
+            let lastDate = null;
+
             journalData.forEach((item, index) => {
                 const wrapper = document.createElement('div');
                 wrapper.className = 'journal-card-wrapper';
                 
+                // 相同的月份/日期只显示一次时间戳
+                let showDateLabel = (item.date !== lastDate);
+                lastDate = item.date;
+
+                let timeLabelHtml = showDateLabel ? `<div class="timeline-label">${item.date}</div>` : '';
+                let dotHtml = showDateLabel ? `<div class="timeline-dot"></div>` : '';
                 let noteHtml = item.note ? `<p class="postcard-note">"${item.note}"</p>` : '';
 
                 wrapper.innerHTML = `
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-label">${item.date}</div>
+                    ${dotHtml}
+                    ${timeLabelHtml}
                     <div class="postcard-frame">
                         <div class="postcard-img-container">
                             <img src="${item.url}" alt="${item.location}" onclick="openLightbox(${index})">
@@ -854,7 +862,7 @@
             container.appendChild(section);
         }
 
-        // 灯箱大图多图连续浏览逻辑
+        // 大图预览与滑动切换
         function openLightbox(index) {
             lightboxCurrentIndex = index;
             const box = document.getElementById('lightbox');
@@ -876,7 +884,7 @@
             document.getElementById('lightboxImg').src = lightboxImages[lightboxCurrentIndex];
         }
 
-        // 键盘左右键切换大图
+        // 键盘左右键与鼠标滚轮切换大图
         document.addEventListener('keydown', (e) => {
             const box = document.getElementById('lightbox');
             if (box.style.display === 'flex') {
@@ -885,6 +893,16 @@
                 if (e.key === 'Escape') box.style.display = 'none';
             }
         });
+
+        // 大图打开时鼠标往下滑可以看下一张
+        document.getElementById('lightbox').addEventListener('wheel', (e) => {
+            e.preventDefault();
+            if (e.deltaY > 0) {
+                changeLightboxImg(1); // 向下滚看下一张
+            } else {
+                changeLightboxImg(-1); // 向上滚看上一张
+            }
+        }, { passive: false });
 
         // BGM 控制
         const audio = document.getElementById('bgmAudio');
