@@ -4,16 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>STELLE SCINTILLANTI - Photography Exhibition</title>
-    <!-- 引入高奢感现代无衬线字体 Montserrat -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #f7f6f2;
-            --sidebar-bg: #0d0d0d;
-            --text-main: #1a1a1a;
-            --text-sub: #8c867a;
-            --card-bg: #ffffff;
-            --border-color: #e2dfd8;
+            --bg-color: #0b0b0b;
+            --sidebar-bg: #050505;
+            --text-main: #f0ebe1;
+            --text-sub: #7a756b;
+            --accent-bronze: #c5a059;
+            --border-color: #1f1f1f;
         }
 
         * {
@@ -42,53 +41,56 @@
             z-index: 1;
         }
 
-        /* 优化自定义光标，确保在黑白背景下都清晰可见 */
         #customCursor {
             position: fixed;
-            width: 10px;
-            height: 10px;
-            background: rgba(247, 246, 242, 0.9);
-            border: 1px solid rgba(26, 26, 26, 0.4);
+            width: 8px;
+            height: 8px;
+            background: rgba(197, 160, 89, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.4);
             border-radius: 50%;
             pointer-events: none;
             transform: translate(-50%, -50%);
-            transition: transform 0.1s ease-out, width 0.2s, height 0.2s, background-color 0.2s;
+            transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1), width 0.3s, height 0.3s, background-color 0.3s;
             z-index: 9999;
-            box-shadow: 0 0 10px rgba(0,0,0,0.15);
+            box-shadow: 0 0 12px rgba(197,160,89,0.4);
         }
 
-        /* 顶部导航 */
+        /* 顶部音乐按钮（滚动后自动淡出隐藏） */
         header {
             position: fixed;
             top: 0;
-            left: 0;
-            width: 100%;
+            right: 0;
             padding: 2.5rem 4rem;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
             z-index: 100;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        header.hidden {
+            opacity: 0;
+            transform: translateY(-20px);
+            pointer-events: none;
         }
 
         .bgm-btn {
-            background: rgba(0, 0, 0, 0.25);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 0.5rem 1.4rem;
+            background: rgba(15, 15, 15, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(197, 160, 89, 0.3);
+            padding: 0.6rem 1.5rem;
             border-radius: 30px;
-            color: #fff;
+            color: var(--accent-bronze);
             font-family: 'Montserrat', sans-serif;
-            font-size: 0.7rem;
-            letter-spacing: 0.15em;
-            transition: all 0.3s ease;
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         .bgm-btn:hover {
-            border-color: rgba(255, 255, 255, 0.8);
-            background: rgba(0, 0, 0, 0.4);
+            border-color: var(--accent-bronze);
+            background: rgba(197, 160, 89, 0.1);
+            box-shadow: 0 0 20px rgba(197,160,89,0.2);
         }
 
-        /* 1. 首屏全屏海报 */
+        /* 首屏全屏海报 */
         .hero-section {
             position: relative;
             width: 100vw;
@@ -97,10 +99,10 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background-color: #0d0d0d;
+            background-color: #050505;
             background-size: cover;
             background-position: center;
-            transition: background-image 1s ease-in-out;
+            transition: background-image 1.2s cubic-bezier(0.25, 1, 0.5, 1);
             z-index: 2;
         }
 
@@ -110,7 +112,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.4);
+            background: linear-gradient(to bottom, rgba(5,5,5,0.3), rgba(11,11,11,0.95));
         }
 
         .hero-content {
@@ -120,6 +122,7 @@
             display: flex;
             flex-direction: column;
             gap: 1.2rem;
+            animation: fadeInDown 1.5s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         .hero-title {
@@ -131,7 +134,7 @@
         }
 
         .hero-subtitle {
-            color: rgba(255, 255, 255, 0.7);
+            color: var(--text-sub);
             font-size: 0.75rem;
             letter-spacing: 0.5em;
             text-transform: uppercase;
@@ -143,8 +146,8 @@
             left: 50%;
             transform: translateX(-50%);
             z-index: 3;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.7rem;
+            color: var(--text-sub);
+            font-size: 0.65rem;
             letter-spacing: 0.25em;
             text-transform: uppercase;
             animation: bounce 2s infinite;
@@ -152,11 +155,16 @@
 
         @keyframes bounce {
             0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); }
-            40% { transform: translate(-50%, -6px); }
-            60% { transform: translate(-50%, -3px); }
+            40% { transform: translate(-50%, -8px); }
+            60% { transform: translate(-50%, -4px); }
         }
 
-        /* 2. 主体双栏布局 */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 双栏布局 */
         .main-layout {
             position: relative;
             z-index: 2;
@@ -164,12 +172,12 @@
             min-height: 100vh;
         }
 
-        /* 左侧黑底索引栏 */
+        /* 左侧固定索引栏与阴影边界 */
         .sidebar {
-            width: 280px;
+            width: 300px;
             background-color: var(--sidebar-bg);
             color: #fff;
-            padding: 5rem 2.5rem;
+            padding: 5rem 3rem;
             position: sticky;
             top: 0;
             height: 100vh;
@@ -178,10 +186,12 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            box-shadow: 15px 0 35px rgba(0, 0, 0, 0.7);
+            z-index: 10;
         }
 
-        .sidebar::-webkit-scrollbar { width: 3px; }
-        .sidebar::-webkit-scrollbar-thumb { background: #333; }
+        .sidebar::-webkit-scrollbar { width: 2px; }
+        .sidebar::-webkit-scrollbar-thumb { background: #222; }
 
         .sidebar-top {
             display: flex;
@@ -189,26 +199,27 @@
             gap: 2.5rem;
         }
 
+        /* 金铜色高定名字 */
         .sidebar-brand {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             letter-spacing: 0.25em;
             text-transform: uppercase;
-            color: #fff;
-            border-bottom: 1px solid #222;
-            padding-bottom: 1rem;
-            font-weight: 300;
+            color: var(--accent-bronze);
+            border-bottom: 1px solid rgba(197, 160, 89, 0.2);
+            padding-bottom: 1.2rem;
+            font-weight: 400;
         }
 
         .filter-group {
             display: flex;
             flex-direction: column;
-            gap: 0.8rem;
+            gap: 0.6rem;
         }
 
         .filter-title {
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             letter-spacing: 0.2em;
-            color: #666;
+            color: #555;
             text-transform: uppercase;
             margin-bottom: 0.3rem;
         }
@@ -216,60 +227,68 @@
         .filter-item {
             font-size: 0.75rem;
             letter-spacing: 0.15em;
-            color: #999;
+            color: var(--text-sub);
             background: none;
             border: none;
             text-align: left;
-            padding: 0.2rem 0;
-            transition: color 0.3s;
+            padding: 0.3rem 0;
+            transition: all 0.3s ease;
             font-family: 'Montserrat', sans-serif;
         }
 
         .filter-item:hover, .filter-item.active {
             color: #fff;
+            transform: translateX(4px);
         }
 
+        /* 年份展开后的月份样式：纯数字 01 02 */
         .sub-months {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.5rem;
+            gap: 0.6rem;
             padding-left: 0.8rem;
             margin-top: 0.4rem;
             margin-bottom: 0.6rem;
-            border-left: 1px solid #333;
+            border-left: 1px solid #222;
         }
 
         .month-btn {
             font-size: 0.7rem;
-            color: #666;
+            color: var(--text-sub);
             background: none;
             border: none;
             letter-spacing: 0.1em;
-            padding: 0.1rem 0.3rem;
+            padding: 0.1rem 0.2rem;
             transition: color 0.2s;
             font-family: 'Montserrat', sans-serif;
         }
 
         .month-btn:hover, .month-btn.active {
-            color: #fff;
+            color: var(--accent-bronze);
         }
 
         .sidebar-footer {
-            font-size: 0.6rem;
+            font-size: 0.55rem;
             color: #444;
             letter-spacing: 0.1em;
         }
 
-        /* 右侧展示内容区 */
+        /* 右侧展区铺满 */
         .content-area {
             flex: 1;
-            padding: 5rem 6rem;
-            max-width: 1400px;
+            padding: 5rem 5rem 10rem 6rem;
+            max-width: 1600px;
+            animation: fadeIn 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .section-header-title {
-            font-size: 0.7rem;
-            letter-spacing: 0.3em;
+            font-size: 0.65rem;
+            letter-spacing: 0.35em;
             color: var(--text-sub);
             text-transform: uppercase;
             margin-bottom: 4rem;
@@ -279,47 +298,53 @@
             font-weight: 400;
         }
 
-        /* 瀑布流结果区 */
+        /* 更有错落感的瀑布流容器 */
         .masonry-grid {
             columns: 2;
-            column-gap: 3rem;
-            margin-bottom: 8rem;
+            column-gap: 3.5rem;
         }
 
         .masonry-item {
             break-inside: avoid;
-            margin-bottom: 3rem;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            padding: 0.8rem;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.02);
-            transition: transform 0.4s ease;
+            margin-bottom: 3.5rem;
+            background: #141414;
+            padding: 0;
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.5s ease;
         }
 
-        .masonry-item:hover {
-            transform: translateY(-3px);
-        }
-
+        /* 游标未滑到时的低饱和度/暗调沉浸效果 */
         .masonry-img {
             width: 100%;
             height: auto;
             display: block;
             object-fit: cover;
+            filter: grayscale(40%) brightness(0.65) contrast(0.95);
+            transition: filter 0.6s cubic-bezier(0.25, 1, 0.5, 1), transform 0.6s ease;
+        }
+
+        .masonry-item:hover .masonry-img {
+            filter: grayscale(0%) brightness(1) contrast(1);
+            transform: scale(1.01);
+        }
+
+        .masonry-item:hover {
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
         }
 
         .masonry-meta {
-            margin-top: 0.8rem;
+            margin-top: 1rem;
             display: flex;
             justify-content: space-between;
             font-size: 0.65rem;
             letter-spacing: 0.15em;
             color: var(--text-sub);
+            padding: 0 0.2rem;
         }
 
-        /* 札记 (Journals) 区 */
+        /* 札记 (Journals) 独立展厅区 */
         .journals-section {
             position: relative;
-            padding-left: 3rem;
+            padding-left: 3.5rem;
         }
 
         .journals-section::before {
@@ -329,54 +354,58 @@
             top: 1rem;
             bottom: 1rem;
             width: 1px;
-            background-color: var(--border-color);
+            background-color: #222;
         }
 
         .journal-card-wrapper {
             position: relative;
-            margin-bottom: 10rem;
+            margin-bottom: 9rem;
         }
 
+        /* 时间轴圆点 */
         .timeline-dot {
             position: absolute;
-            left: -3rem;
-            top: 2rem;
+            left: -3.5rem;
+            top: 1.5rem;
             width: 7px;
             height: 7px;
-            background-color: var(--text-main);
+            background-color: var(--accent-bronze);
             border-radius: 50%;
             transform: translateX(-3px);
+            box-shadow: 0 0 8px var(--accent-bronze);
         }
 
+        /* 时间文字在圆点左下角横向显示，不压线 */
         .timeline-label {
             position: absolute;
-            left: -3rem;
-            top: 2.8rem;
-            transform: translateX(-50%) rotate(-90deg);
+            left: -6.5rem;
+            top: 2.5rem;
             font-size: 0.6rem;
-            letter-spacing: 0.2em;
+            letter-spacing: 0.15em;
             color: var(--text-sub);
-            text-transform: uppercase;
+            white-space: nowrap;
         }
 
+        /* 札记卡片 */
         .postcard-frame {
-            background-color: var(--card-bg);
-            border: 1px solid #1a1a1a;
-            padding: 1rem;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.03);
-            width: 90%;
+            background-color: #121212;
+            border: 1px solid #222;
+            padding: 1.2rem;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            width: 85%;
             margin-left: auto;
-            transition: transform 0.5s ease;
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         .postcard-frame:hover {
             transform: translateY(-4px);
+            border-color: #333;
         }
 
         .postcard-img-container {
             width: 100%;
             overflow: hidden;
-            background: #eee;
+            background: #0a0a0a;
         }
 
         .postcard-img-container img {
@@ -384,12 +413,18 @@
             height: auto;
             display: block;
             object-fit: cover;
+            filter: grayscale(30%) brightness(0.7);
+            transition: filter 0.6s ease;
+        }
+
+        .postcard-frame:hover .postcard-img-container img {
+            filter: grayscale(0%) brightness(1);
         }
 
         .postcard-footer {
             margin-top: 1.2rem;
-            padding-top: 0.8rem;
-            border-top: 1px solid var(--border-color);
+            padding-top: 1rem;
+            border-top: 1px solid #1c1c1c;
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
@@ -399,7 +434,7 @@
         .postcard-note {
             font-size: 0.75rem;
             letter-spacing: 0.1em;
-            color: #444;
+            color: #b5ada0;
             line-height: 1.6;
             font-style: italic;
         }
@@ -420,31 +455,55 @@
             font-weight: 500;
         }
 
-        /* 灯箱大图预览 */
+        /* 灯箱大图预览与连续切换控件 */
         #lightbox {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(5, 5, 5, 0.95);
+            backdrop-filter: blur(10px);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 10000;
-            padding: 3rem;
+            padding: 4rem;
         }
 
         #lightbox img {
-            max-width: 90vw;
-            max-height: 90vh;
+            max-width: 85vw;
+            max-height: 85vh;
             object-fit: contain;
-            border: 1px solid #333;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.8);
+            animation: zoomIn 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            padding: 1.5rem 1rem;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .lightbox-nav:hover { background: rgba(255,255,255,0.15); }
+        .lightbox-prev { left: 2rem; }
+        .lightbox-next { right: 2rem; }
 
         @media (max-width: 1024px) {
             .main-layout { flex-direction: column; }
-            .sidebar { width: 100%; height: auto; position: relative; }
+            .sidebar { width: 100%; height: auto; position: relative; box-shadow: none; border-bottom: 1px solid #222; }
             .content-area { padding: 3rem 2rem; }
             .masonry-grid { columns: 1; }
             .postcard-frame { width: 100%; }
@@ -456,7 +515,7 @@
     <canvas id="particleCanvas"></canvas>
     <div id="customCursor"></div>
 
-    <header>
+    <header id="siteHeader">
         <button class="bgm-btn" id="bgmToggle">SOUND: Kan R. Gao - Born a Stranger</button>
     </header>
 
@@ -464,7 +523,7 @@
         <source src="Kan R. Gao - Born a Stranger.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- 1. 首屏全屏海报 -->
+    <!-- 首屏海报 -->
     <section class="hero-section" id="heroSection">
         <div class="hero-overlay"></div>
         <div class="hero-content">
@@ -474,22 +533,27 @@
         <div class="scroll-hint">SCROLL DOWN ↓</div>
     </section>
 
-    <!-- 2. 主体双栏区域 -->
+    <!-- 主体双栏区域 -->
     <div class="main-layout">
-        <!-- 左侧黑底索引栏 -->
+        <!-- 左侧索引栏 -->
         <aside class="sidebar">
             <div class="sidebar-top">
                 <div class="sidebar-brand">STELLE SCINTILLANTI</div>
 
                 <div class="filter-group">
-                    <div class="filter-title">CHRONOLOGY</div>
-                    <button class="filter-item active" onclick="filterAll()">All Archives</button>
+                    <div class="filter-title">ARCHIVES</div>
+                    <button class="filter-item active" onclick="switchView('all')">All Works</button>
                     <div id="yearFilterContainer"></div>
                 </div>
 
-                <div class="filter-group" style="margin-top: 1rem;">
+                <div class="filter-group" style="margin-top: 1.2rem;">
                     <div class="filter-title">LOCATIONS</div>
                     <div id="locationFilterContainer"></div>
+                </div>
+
+                <div class="filter-group" style="margin-top: 1.2rem;">
+                    <div class="filter-title">EXHIBITION</div>
+                    <button class="filter-item" onclick="switchView('journals')">Journals & Notes</button>
                 </div>
             </div>
 
@@ -498,33 +562,41 @@
             </div>
         </aside>
 
-        <!-- 右侧内容动态呈现区 -->
-        <main class="content-area">
-            <div id="dynamicView">
-                <div class="section-header-title">
-                    <span id="viewTitle">ARCHIVE COLLECTION</span>
-                    <span id="viewCount">0 items</span>
-                </div>
-                <div class="masonry-grid" id="masonryContainer"></div>
-
-                <div class="section-header-title" style="margin-top: 8rem;">
-                    <span>JOURNALS & NOTES</span>
-                </div>
-                <section class="journals-section" id="journalsContainer"></section>
-            </div>
+        <!-- 右侧动态内容展厅 -->
+        <main class="content-area" id="contentArea">
+            <!-- 动态渲染槽 -->
         </main>
     </div>
 
-    <!-- 灯箱大图预览 -->
-    <div id="lightbox" onclick="closeLightbox()">
+    <!-- 影院级灯箱大图预览 -->
+    <div id="lightbox" onclick="closeLightbox(event)">
+        <button class="lightbox-nav lightbox-prev" onclick="event.stopPropagation(); changeLightboxImg(-1)">❮</button>
         <img id="lightboxImg" src="" alt="Zoomed view">
+        <button class="lightbox-nav lightbox-next" onclick="event.stopPropagation(); changeLightboxImg(1)">❯</button>
     </div>
 
     <script>
         let allData = [];
-        let activeYear = null;
+        let currentViewMode = 'all'; // 'all', 'year', 'month', 'location', 'journals'
+        let currentFilterParam = null;
+        let currentSubParam = null;
+        
+        let lightboxImages = [];
+        let lightboxCurrentIndex = 0;
 
-        // 光标跟随
+        // 滚动时隐藏/显示 BGM 按钮
+        let lastScrollTop = 0;
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('siteHeader');
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrollTop > 200) {
+                header.classList.add('hidden');
+            } else {
+                header.classList.remove('hidden');
+            }
+        });
+
+        // 光标交互
         const cursor = document.getElementById('customCursor');
         document.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px';
@@ -533,17 +605,17 @@
 
         document.addEventListener('mouseover', (e) => {
             if (e.target.tagName === 'BUTTON' || e.target.closest('.masonry-item') || e.target.closest('.postcard-frame')) {
-                cursor.style.width = '24px';
-                cursor.style.height = '24px';
-                cursor.style.backgroundColor = 'rgba(255,255,255,0.3)';
+                cursor.style.width = '26px';
+                cursor.style.height = '26px';
+                cursor.style.backgroundColor = 'rgba(197, 160, 89, 0.2)';
             } else {
-                cursor.style.width = '10px';
-                cursor.style.height = '10px';
-                cursor.style.backgroundColor = 'rgba(247, 246, 242, 0.9)';
+                cursor.style.width = '8px';
+                cursor.style.height = '8px';
+                cursor.style.backgroundColor = 'rgba(197, 160, 89, 0.9)';
             }
         });
 
-        // 背景微粒
+        // 粒子背景
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -558,10 +630,10 @@
             constructor() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 1.2 + 0.3;
-                this.speedX = Math.random() * 0.2 - 0.1;
-                this.speedY = Math.random() * 0.2 - 0.1;
-                this.opacity = Math.random() * 0.4 + 0.1;
+                this.size = Math.random() * 1.2 + 0.2;
+                this.speedX = Math.random() * 0.15 - 0.07;
+                this.speedY = Math.random() * 0.15 - 0.07;
+                this.opacity = Math.random() * 0.3 + 0.05;
             }
             update() {
                 this.x += this.speedX; this.y += this.speedY;
@@ -569,11 +641,11 @@
                 if (this.y < 0) this.y = canvas.height; if (this.y > canvas.height) this.y = 0;
             }
             draw() {
-                ctx.fillStyle = `rgba(150, 140, 130, ${this.opacity})`;
+                ctx.fillStyle = `rgba(197, 160, 89, ${this.opacity})`;
                 ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
             }
         }
-        for (let i = 0; i < 35; i++) particles.push(new Particle());
+        for (let i = 0; i < 30; i++) particles.push(new Particle());
         function animateParticles() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             particles.forEach(p => { p.update(); p.draw(); });
@@ -581,28 +653,26 @@
         }
         animateParticles();
 
-        // 加载数据与渲染
+        // 初始化加载数据
         async function initGallery() {
             try {
                 const res = await fetch('data.json');
                 allData = await res.json();
 
                 const journalPool = allData.filter(item => item.journal);
-                const randomPool = journalPool.length > 0 ? journalPool : allData;
-                if (randomPool.length > 0) {
-                    const heroPhoto = randomPool[Math.floor(Math.random() * randomPool.length)];
+                if (journalPool.length > 0) {
+                    const heroPhoto = journalPool[Math.floor(Math.random() * journalPool.length)];
                     document.getElementById('heroSection').style.backgroundImage = `url('${heroPhoto.url}')`;
                 }
 
                 buildSidebarFilters();
-                renderMasonry(allData, "ALL ARCHIVES");
-                renderJournals(journalPool.length > 0 ? journalPool : allData);
-
+                renderContent();
             } catch (err) {
                 console.error("加载数据失败:", err);
             }
         }
 
+        // 构建侧边栏双重索引
         function buildSidebarFilters() {
             const yearMap = {};
             const locations = new Set();
@@ -616,6 +686,7 @@
                 if (item.location) locations.add(item.location);
             });
 
+            // 年份渲染
             const yearContainer = document.getElementById('yearFilterContainer');
             yearContainer.innerHTML = '';
             Object.keys(yearMap).sort().reverse().forEach(year => {
@@ -623,28 +694,40 @@
                 const yBtn = document.createElement('button');
                 yBtn.className = 'filter-item';
                 yBtn.innerText = year;
-                yBtn.onclick = () => toggleYear(year, Array.from(yearMap[year]).sort(), wrapper);
+                yBtn.onclick = () => toggleYearMenu(year, Array.from(yearMap[year]).sort(), wrapper);
                 wrapper.appendChild(yBtn);
                 yearContainer.appendChild(wrapper);
             });
 
+            // 地点渲染（独立一行）
             const locContainer = document.getElementById('locationFilterContainer');
             locContainer.innerHTML = '';
             locations.forEach(loc => {
                 const lBtn = document.createElement('button');
                 lBtn.className = 'filter-item';
+                lBtn.style.display = 'block';
+                lBtn.style.width = '100%';
                 lBtn.innerText = loc;
-                lBtn.onclick = () => filterByLocation(loc, lBtn);
+                lBtn.onclick = () => {
+                    document.querySelectorAll('.filter-item, .month-btn').forEach(el => el.classList.remove('active'));
+                    lBtn.classList.add('active');
+                    currentViewMode = 'location';
+                    currentFilterParam = loc;
+                    currentSubParam = null;
+                    renderContent();
+                };
                 locContainer.appendChild(lBtn);
             });
         }
 
-        function toggleYear(year, months, wrapperElement) {
+        function toggleYearMenu(year, months, wrapperElement) {
             document.querySelectorAll('.filter-item').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.sub-months').forEach(el => el.remove());
 
-            activeYear = year;
             event.target.classList.add('active');
+            currentViewMode = 'year';
+            currentFilterParam = year;
+            currentSubParam = null;
 
             const subDiv = document.createElement('div');
             subDiv.className = 'sub-months';
@@ -652,80 +735,102 @@
             months.forEach(m => {
                 const mBtn = document.createElement('button');
                 mBtn.className = 'month-btn';
-                mBtn.innerText = `${year}.${m}`;
+                mBtn.innerText = m; // 直接显示 01, 02 不带年份
                 mBtn.onclick = (e) => {
                     e.stopPropagation();
                     document.querySelectorAll('.month-btn').forEach(b => b.classList.remove('active'));
                     mBtn.classList.add('active');
-                    filterByYearMonth(year, m);
+                    currentViewMode = 'month';
+                    currentSubParam = m;
+                    renderContent();
                 };
                 subDiv.appendChild(mBtn);
             });
 
             wrapperElement.appendChild(subDiv);
-            filterByYear(year);
+            renderContent();
         }
 
-        function filterAll() {
+        function switchView(mode) {
             document.querySelectorAll('.filter-item, .month-btn').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.sub-months').forEach(el => el.remove());
             event.target.classList.add('active');
-            renderMasonry(allData, "ALL ARCHIVES");
+
+            currentViewMode = mode;
+            currentFilterParam = null;
+            currentSubParam = null;
+            renderContent();
         }
 
-        function filterByYear(year) {
-            const filtered = allData.filter(item => (item.year || item.date.split('.')[0]) === year);
-            renderMasonry(filtered, `YEAR: ${year}`);
-        }
-
-        function filterByYearMonth(year, month) {
-            const filtered = allData.filter(item => {
-                const y = item.year || item.date.split('.')[0];
-                const m = item.month || item.date.split('.')[1];
-                return y === year && m === month;
-            });
-            renderMasonry(filtered, `PERIOD: ${year}.${month}`);
-        }
-
-        function filterByLocation(loc, btnElement) {
-            document.querySelectorAll('.filter-item, .month-btn').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.sub-months').forEach(el => el.remove());
-            btnElement.classList.add('active');
-
-            const filtered = allData.filter(item => item.location === loc);
-            renderMasonry(filtered, `LOCATION: ${loc}`);
-        }
-
-        function renderMasonry(dataArray, titleText) {
-            document.getElementById('viewTitle').innerText = titleText;
-            document.getElementById('viewCount').innerText = `${dataArray.length} items`;
-            
-            const container = document.getElementById('masonryContainer');
+        // 根据当前状态核心渲染右侧
+        function renderContent() {
+            const container = document.getElementById('contentArea');
             container.innerHTML = '';
 
-            dataArray.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'masonry-item';
-                div.innerHTML = `
-                    <img src="${item.url}" alt="${item.location}" class="masonry-img" onclick="openLightbox('${item.url}')">
+            let filteredData = allData;
+            let titleText = "ALL ARCHIVES";
+
+            if (currentViewMode === 'year') {
+                filteredData = allData.filter(item => (item.year || item.date.split('.')[0]) === currentFilterParam);
+                titleText = `CHRONOLOGY: ${currentFilterParam}`;
+            } else if (currentViewMode === 'month') {
+                filteredData = allData.filter(item => {
+                    const y = item.year || item.date.split('.')[0];
+                    const m = item.month || item.date.split('.')[1];
+                    return y === currentFilterParam && m === currentSubParam;
+                });
+                titleText = `PERIOD: ${currentFilterParam}.${currentSubParam}`;
+            } else if (currentViewMode === 'location') {
+                filteredData = allData.filter(item => item.location === currentFilterParam);
+                titleText = `LOCATION: ${currentFilterParam}`;
+            } else if (currentViewMode === 'journals') {
+                renderJournalsView(container);
+                return;
+            }
+
+            // 渲染瀑布流视窗
+            lightboxImages = filteredData.map(i => i.url);
+            
+            const headerDiv = document.createElement('div');
+            headerDiv.className = 'section-header-title';
+            headerDiv.innerHTML = `<span>${titleText}</span><span>${filteredData.length} items</span>`;
+            container.appendChild(headerDiv);
+
+            const gridDiv = document.createElement('div');
+            gridDiv.className = 'masonry-grid';
+
+            filteredData.forEach((item, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'masonry-item';
+                itemDiv.innerHTML = `
+                    <img src="${item.url}" alt="${item.location}" class="masonry-img" onclick="openLightbox(${index})">
                     <div class="masonry-meta">
                         <span>${item.location}</span>
                         <span>${item.date}</span>
                     </div>
                 `;
-                container.appendChild(div);
+                gridDiv.appendChild(itemDiv);
             });
+            container.appendChild(gridDiv);
         }
 
-        function renderJournals(journalData) {
-            const container = document.getElementById('journalsContainer');
-            container.innerHTML = '';
+        // 渲染独立札记展厅
+        function renderJournalsView(container) {
+            const journalData = allData.filter(item => item.journal);
+            lightboxImages = journalData.map(i => i.url);
 
-            journalData.forEach(item => {
+            const headerDiv = document.createElement('div');
+            headerDiv.className = 'section-header-title';
+            headerDiv.innerHTML = `<span>JOURNALS & NOTES COLLECTION</span><span>${journalData.length} entries</span>`;
+            container.appendChild(headerDiv);
+
+            const section = document.createElement('section');
+            section.className = 'journals-section';
+
+            journalData.forEach((item, index) => {
                 const wrapper = document.createElement('div');
                 wrapper.className = 'journal-card-wrapper';
                 
-                // 只有当 note 有内容时才渲染文字备注部分
                 let noteHtml = item.note ? `<p class="postcard-note">"${item.note}"</p>` : '';
 
                 wrapper.innerHTML = `
@@ -733,7 +838,7 @@
                     <div class="timeline-label">${item.date}</div>
                     <div class="postcard-frame">
                         <div class="postcard-img-container">
-                            <img src="${item.url}" alt="${item.location}" onclick="openLightbox('${item.url}')">
+                            <img src="${item.url}" alt="${item.location}" onclick="openLightbox(${index})">
                         </div>
                         <div class="postcard-footer" ${!item.note ? 'style="border-top:none; margin-top:0.8rem;"' : ''}>
                             ${noteHtml}
@@ -744,19 +849,42 @@
                         </div>
                     </div>
                 `;
-                container.appendChild(wrapper);
+                section.appendChild(wrapper);
             });
+            container.appendChild(section);
         }
 
-        function openLightbox(url) {
+        // 灯箱大图多图连续浏览逻辑
+        function openLightbox(index) {
+            lightboxCurrentIndex = index;
             const box = document.getElementById('lightbox');
             const img = document.getElementById('lightboxImg');
-            img.src = url;
+            img.src = lightboxImages[lightboxCurrentIndex];
             box.style.display = 'flex';
         }
-        function closeLightbox() {
-            document.getElementById('lightbox').style.display = 'none';
+
+        function closeLightbox(e) {
+            if (e.target.id === 'lightbox') {
+                document.getElementById('lightbox').style.display = 'none';
+            }
         }
+
+        function changeLightboxImg(direction) {
+            lightboxCurrentIndex += direction;
+            if (lightboxCurrentIndex < 0) lightboxCurrentIndex = lightboxImages.length - 1;
+            if (lightboxCurrentIndex >= lightboxImages.length) lightboxCurrentIndex = 0;
+            document.getElementById('lightboxImg').src = lightboxImages[lightboxCurrentIndex];
+        }
+
+        // 键盘左右键切换大图
+        document.addEventListener('keydown', (e) => {
+            const box = document.getElementById('lightbox');
+            if (box.style.display === 'flex') {
+                if (e.key === 'ArrowLeft') changeLightboxImg(-1);
+                if (e.key === 'ArrowRight') changeLightboxImg(1);
+                if (e.key === 'Escape') box.style.display = 'none';
+            }
+        });
 
         // BGM 控制
         const audio = document.getElementById('bgmAudio');
