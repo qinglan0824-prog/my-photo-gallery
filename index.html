@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory & Journey</title>
+    <style>
+        :root {
+            --bg-color: #f4efe6;
+            --text-main: #2b2b2b;
+            --text-sub: #7a7365;
+            --card-bg: #fcf9f2;
+            --border-color: #e2d9c8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none; /* 隐藏默认光标 */
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: "Georgia", "Times New Roman", "Songti SC", "Noto Serif CJK SC", serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 自定义微粒背景 Canvas */
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* 自定义跟随光标 */
+        #customCursor {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            background: rgba(120, 100, 80, 0.6);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease, width 0.2s, height 0.2s;
+            z-index: 9999;
+            mix-blend-mode: multiply;
+        }
+
+        /* 顶部导航与 BGM 控制 */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 2rem 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+            background: linear-gradient(to bottom, rgba(244, 239, 230, 0.9), transparent);
+        }
+
+        .brand-title {
+            font-size: 1.2rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            font-weight: 300;
+        }
+
+        .bgm-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1.2rem;
+            border-radius: 20px;
+            color: var(--text-sub);
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+            transition: all 0.3s ease;
+        }
+
+        .bgm-btn:hover {
+            border-color: var(--text-main);
+            color: var(--text-main);
+        }
+
+        /* 摄影明信片画廊列表 */
+        main {
+            position: relative;
+            z-index: 2;
+            max-width: 1100px;
+            margin: 8rem auto 4rem auto;
+            padding: 0 2rem;
+        }
+
+        .postcard-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 2.5rem;
+            margin-bottom: 6rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 2.5rem;
+            align-items: center;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .postcard-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
+        }
+
+        .photo-frame {
+            position: relative;
+            overflow: hidden;
+            background-color: #eee;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .postcard-card:hover .photo-frame img {
+            transform: scale(1.03);
+        }
+
+        .postcard-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            padding: 1rem 0;
+            border-left: 1px dashed var(--border-color);
+            padding-left: 2rem;
+        }
+
+        .meta-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            letter-spacing: 0.15em;
+            margin-bottom: 1.5rem;
+        }
+
+        .photo-title {
+            font-size: 1.6rem;
+            font-weight: 400;
+            letter-spacing: 0.1em;
+            margin-bottom: 1.5rem;
+            line-height: 1.4;
+        }
+
+        .photo-note {
+            font-size: 0.95rem;
+            color: var(--text-sub);
+            line-height: 1.8;
+            font-style: italic;
+            margin-top: auto;
+        }
+
+        @media (max-width: 768px) {
+            .postcard-card {
+                grid-template-columns: 1fr;
+                padding: 1.5rem;
+            }
+            .postcard-info {
+                border-left: none;
+                border-top: 1px dashed var(--border-color);
+                padding-left: 0;
+                padding-top: 1.5rem;
+            }
+            header {
+                padding: 1.5rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 光线 Dust 粒子 Canvas -->
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- 跟随光标 -->
+    <div id="customCursor"></div>
+
+    <!-- 顶部 -->
+    <header>
+        <div class="brand-title">Lumière / Memory</div>
+        <button class="bgm-btn" id="bgmToggle">SOUND: OFF</button>
+    </header>
+
+    <!-- 音频元件 -->
+    <audio id="bgmAudio" loop src="bgm.mp3"></audio>
+
+    <!-- 主展示区 -->
+    <main id="galleryContainer"></main>
+
+    <script>
+        // 1. 光标跟随效果
+        const cursor = document.getElementById('customCursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        // Hover 放大光标
+        document.addEventListener('mouseover', (e) => {
+            if (e.target.tagName === 'BUTTON' || e.target.closest('.postcard-card')) {
+                cursor.style.width = '24px';
+                cursor.style.height = '24px';
+            } else {
+                cursor.style.width = '12px';
+                cursor.style.height = '12px';
+            }
+        });
+
+        // 2. 尘埃粒子动画 (Dust Particles)
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 1.5 + 0.5;
+                this.speedX = Math.random() * 0.4 - 0.2;
+                this.speedY = Math.random() * 0.4 - 0.2;
+                this.opacity = Math.random() * 0.5 + 0.2;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.y < 0) this.y = canvas.height;
+                if (this.y > canvas.height) this.y = 0;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(160, 140, 110, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 45; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // 3. 读取本地 data.json 渲染照片
+        async function loadGallery() {
+            try {
+                const res = await fetch('data.json');
+                const data = await res.json();
+                const container = document.getElementById('galleryContainer');
+                container.innerHTML = '';
+
+                data.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'postcard-card';
+                    card.innerHTML = `
+                        <div class="photo-frame">
+                            <img src="${item.url}" alt="${item.title}" loading="lazy">
+                        </div>
+                        <div class="postcard-info">
+                            <div>
+                                <div class="meta-header">
+                                    <span>${item.location}</span>
+                                    <span>${item.date}</span>
+                                </div>
+                                <h2 class="photo-title">${item.title}</h2>
+                            </div>
+                            <p class="photo-note">“ ${item.note} ”</p>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (err) {
+                console.error("加载数据出错:", err);
+            }
+        }
+
+        // 4. BGM 控制
+        const audio = document.getElementById('bgmAudio');
+        const bgmToggle = document.getElementById('bgmToggle');
+        bgmToggle.onclick = () => {
+            if (audio.paused) {
+                audio.play();
+                bgmToggle.innerText = "SOUND: ON";
+            } else {
+                audio.pause();
+                bgmToggle.innerText = "SOUND: OFF";
+            }
+        };
+
+        window.onload = loadGallery;
+    </script>
+</body>
+</html>
