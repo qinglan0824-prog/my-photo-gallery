@@ -2,17 +2,13 @@
   {
     "id": 1,
     "url": "photos/retouch_2023072318421306-2.jpg",
-    "title": "馒头",
     "location": "杭州",
-    "date": "2023.07",
-    "note": "写下关于馒头的故事或心情..."
+    "date": "2023.07"
   },
   {
     "id": 2,
     "url": "photos/retouch_2023072521483566-2.jpg",
-    "title": "西瓜",
     "location": "六安",
-    "date": "2023.07",
-    "note": "夏天的西瓜，晚风与回忆。"
+    "date": "2023.07"
   }
 ]
