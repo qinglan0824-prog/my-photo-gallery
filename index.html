@@ -22,10 +22,6 @@
             cursor: none;
         }
 
-        html {
-            scroll-behavior: smooth;
-        }
-
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
@@ -94,7 +90,7 @@
             box-shadow: 0 0 20px rgba(197,160,89,0.2);
         }
 
-        /* 右下角常驻返回顶部箭头 */
+        /* 右下角常驻返回顶部按钮 */
         #backToTopBtn {
             position: fixed;
             bottom: 3rem;
@@ -342,21 +338,25 @@
             font-weight: 400;
         }
 
-        /* 2. 瀑布流区：图片缩小至约1/2（改为5列/6列），间隙变窄 */
+        /* 2. 瀑布流区：控制为最多 5 列，图片大小适中大方 */
         .masonry-grid {
             columns: 5;
-            column-gap: 0.8rem;
+            column-gap: 1rem;
         }
 
-        @media (min-width: 1800px) {
-            .masonry-grid {
-                columns: 6;
-            }
+        @media (max-width: 1600px) {
+            .masonry-grid { columns: 4; }
+        }
+        @media (max-width: 1200px) {
+            .masonry-grid { columns: 3; }
+        }
+        @media (max-width: 800px) {
+            .masonry-grid { columns: 2; }
         }
 
         .masonry-item {
             break-inside: avoid;
-            margin-bottom: 0.8rem;
+            margin-bottom: 1rem;
             background: transparent;
             opacity: 0;
             animation: itemFadeIn 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
@@ -378,7 +378,7 @@
             height: auto;
             display: block;
             object-fit: cover;
-            filter: grayscale(40%) brightness(0.7);
+            filter: grayscale(35%) brightness(0.75);
             transition: filter 0.5s ease, transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
@@ -387,10 +387,10 @@
             transform: scale(1.02);
         }
 
-        /* 独立札记展厅：精确对齐时间轴与右移明信片 */
+        /* 独立札记展厅：精确对齐时间轴 */
         .journals-section {
             position: relative;
-            padding-left: 3rem; /* 轴线位于左侧 3rem 处 */
+            padding-left: 3rem;
         }
 
         .journals-section::before {
@@ -408,7 +408,7 @@
             margin-bottom: 10rem;
             opacity: 0;
             animation: itemFadeIn 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-            scroll-margin-top: 6rem; /* 锚点定位留白 */
+            scroll-margin-top: 6rem;
         }
 
         .timeline-dot {
@@ -542,7 +542,7 @@
             transform: scale(0.97);
         }
 
-        /* 3. 点开大图之后的左右切换按钮：高级简约金铜色大角度箭头 */
+        /* 切换按钮 */
         .lightbox-nav {
             position: absolute;
             top: 50%;
@@ -577,7 +577,6 @@
             .main-layout { flex-direction: column; }
             .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid #222; }
             .content-area { padding: 3rem 2rem; }
-            .masonry-grid { columns: 2; }
             .postcard-frame { width: 100%; margin-left: 0; }
             .journals-section { padding-left: 1.5rem; }
             .journals-section::before { left: 0.5rem; }
@@ -633,7 +632,6 @@
                 <div class="filter-group" style="margin-top: 1.2rem;">
                     <div class="filter-title">EXHIBITION</div>
                     <button class="filter-item" id="journalsViewBtn" onclick="switchViewToJournals()">Journals & Notes</button>
-                    <!-- 1. 札记时间索引扩展容器 -->
                     <div id="journalTimeIndexContainer"></div>
                 </div>
             </div>
@@ -650,7 +648,6 @@
 
     <!-- 影院级灯箱大图预览 -->
     <div id="lightbox" onclick="closeLightbox(event)">
-        <!-- 3. 高级简约金铜色大角度箭头切换按钮 -->
         <button class="lightbox-nav lightbox-prev" onclick="event.stopPropagation(); changeLightboxImg(-1)">‹</button>
         <img id="lightboxImg" src="" alt="Zoomed view">
         <button class="lightbox-nav lightbox-next" onclick="event.stopPropagation(); changeLightboxImg(1)">›</button>
@@ -666,17 +663,17 @@
         let lightboxImages = [];
         let lightboxCurrentIndex = 0;
 
-        // 4. 平滑惯性滚轮交互逻辑
+        // 1. 优化滚轮交互：提高跟随系数，消除拖沓感
         let currentScrollY = window.scrollY;
         let targetScrollY = window.scrollY;
         let isSmoothScrolling = false;
 
         window.addEventListener('wheel', (e) => {
             const box = document.getElementById('lightbox');
-            if (box && box.style.display === 'flex') return; // 灯箱开启时不拦截
+            if (box && box.style.display === 'flex') return;
 
             e.preventDefault();
-            targetScrollY += e.deltaY * 0.85; // 调整滚轮敏感度与拉伸感
+            targetScrollY += e.deltaY * 0.9;
             targetScrollY = Math.max(0, Math.min(targetScrollY, document.documentElement.scrollHeight - window.innerHeight));
 
             if (!isSmoothScrolling) {
@@ -687,7 +684,9 @@
         function updateSmoothScroll() {
             isSmoothScrolling = true;
             const diff = targetScrollY - currentScrollY;
-            currentScrollY += diff * 0.085; // 惯性系数，越小越丝滑缓动
+            
+            // 追赶系数由原先的 0.085 提高至 0.22，响应更迅速不黏手
+            currentScrollY += diff * 0.22;
 
             window.scrollTo(0, currentScrollY);
 
@@ -699,7 +698,7 @@
             }
         }
 
-        // 点击产生优雅缓慢的微型星座连线特效
+        // 点击星空连线
         document.addEventListener('mousedown', (e) => {
             createConstellationBurst(e.clientX, e.clientY);
         });
@@ -726,7 +725,7 @@
             });
         }
 
-        // 滚动监听
+        // 页面滚动监听
         window.addEventListener('scroll', () => {
             if (!isSmoothScrolling) {
                 currentScrollY = window.scrollY;
@@ -758,7 +757,7 @@
             });
         }
 
-        // 光标跟随
+        // 鼠标光标
         const cursor = document.getElementById('customCursor');
         document.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px';
@@ -777,7 +776,7 @@
             }
         });
 
-        // 背景粒子与星座连线系统
+        // 粒子背景引擎
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
         let ambientParticles = [];
@@ -871,6 +870,9 @@
                 const res = await fetch('data.json');
                 allData = await res.json();
 
+                // 按日期做通用降序排序 (最新在前)
+                allData.sort((a, b) => b.date.localeCompare(a.date));
+
                 const journalPool = allData.filter(item => item.journal);
                 if (journalPool.length > 0) {
                     const heroPhoto = journalPool[Math.floor(Math.random() * journalPool.length)];
@@ -899,6 +901,7 @@
 
             const yearContainer = document.getElementById('yearFilterContainer');
             yearContainer.innerHTML = '';
+            // 年份从高到低排列 (例如 2026 -> 2025 -> 2024)
             Object.keys(yearMap).sort().reverse().forEach(year => {
                 const wrapper = document.createElement('div');
                 const yBtn = document.createElement('button');
@@ -937,7 +940,6 @@
             });
         }
 
-        // 1. 构建札记区的时间索引（年份与月份二级联动）
         function buildJournalTimeIndex() {
             const container = document.getElementById('journalTimeIndexContainer');
             container.innerHTML = '';
@@ -957,6 +959,7 @@
             subContainer.style.marginTop = '0.5rem';
             subContainer.style.borderLeft = '1px solid rgba(197, 160, 89, 0.2)';
 
+            // 年份降序
             Object.keys(journalYearMap).sort().reverse().forEach(year => {
                 const yWrapper = document.createElement('div');
                 
@@ -969,6 +972,7 @@
                 mContainer.className = 'sub-months';
                 mContainer.style.display = 'none';
 
+                // 月份也倒序排列，优先跳到最新的月份
                 Array.from(journalYearMap[year]).sort().reverse().forEach(month => {
                     const mBtn = document.createElement('button');
                     mBtn.className = 'month-btn';
@@ -1104,6 +1108,7 @@
             renderContent();
         }
 
+        // 4. 瀑布流渲染：确保时间最新的图片排在最上面
         function renderContent() {
             const container = document.getElementById('contentArea');
             container.innerHTML = '';
@@ -1113,7 +1118,8 @@
                 return;
             }
 
-            let filteredData = allData;
+            // 数据进行时间降序排列
+            let filteredData = [...allData].sort((a, b) => b.date.localeCompare(a.date));
             let titleText = "ALL ARCHIVES";
 
             if (selectedYear) {
@@ -1154,8 +1160,10 @@
             container.appendChild(gridDiv);
         }
 
+        // 3. 札记区渲染：同样进行时间降序倒序排列（最上面的为最新）
         function renderJournalsView(container) {
-            const journalData = allData.filter(item => item.journal);
+            // 时间降序
+            const journalData = allData.filter(item => item.journal).sort((a, b) => b.date.localeCompare(a.date));
             lightboxImages = journalData.map(i => i.url);
 
             const headerDiv = document.createElement('div');
