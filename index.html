@@ -423,7 +423,7 @@ font-size: 0.65rem;
   font-weight: 400;
 
   /* 向左平移自身100%，并向下适当偏移 */
-  transform: translate(-100%, 8px); 
+  transform: translate(calc(-100% - 8px), 8px); 
 }
 
         /* 札记区明信片：复古泛黄边框，整体往右挪开与时间轴拉开距离，同时尺寸可以适当放大 */
@@ -433,7 +433,7 @@ font-size: 0.65rem;
             padding: 1.4rem;
             box-shadow: 0 25px 60px rgba(0,0,0,0.5), inset 0 0 30px rgba(197, 160, 89, 0.05);
             width: 90%; 
-            margin-left: 5rem; /* 整体往右挪，与左侧时间轴和时间标记拉开舒适的呼吸感，且照片空间更大 */
+            margin-left: 8rem; /* 整体往右挪，与左侧时间轴和时间标记拉开舒适的呼吸感，且照片空间更大 */
             transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.5s ease;
         }
 
