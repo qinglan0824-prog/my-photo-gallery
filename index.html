@@ -55,7 +55,6 @@
             box-shadow: 0 0 12px rgba(197,160,89,0.4);
         }
 
-        /* 顶部音乐按钮 */
         header {
             position: fixed;
             top: 0;
@@ -90,7 +89,6 @@
             box-shadow: 0 0 20px rgba(197,160,89,0.2);
         }
 
-        /* 右下角常驻返回顶部按钮 */
         #backToTopBtn {
             position: fixed;
             bottom: 3rem;
@@ -125,7 +123,6 @@
             box-shadow: 0 15px 35px rgba(197, 160, 89, 0.2);
         }
 
-        /* 首屏海报与入场动画 */
         .hero-section {
             position: relative;
             width: 100vw;
@@ -199,7 +196,6 @@
             60% { transform: translate(-50%, -4px); }
         }
 
-        /* 双栏布局 */
         .main-layout {
             position: relative;
             z-index: 2;
@@ -207,7 +203,6 @@
             min-height: 100vh;
         }
 
-        /* 左侧固定索引栏 */
         .sidebar {
             width: 300px;
             background-color: var(--sidebar-bg);
@@ -313,7 +308,6 @@
             letter-spacing: 0.1em;
         }
 
-        /* 右侧展区铺满 */
         .content-area {
             flex: 1;
             padding: 5rem 4rem 12rem 5rem;
@@ -338,7 +332,6 @@
             font-weight: 400;
         }
 
-        /* 2. 瀑布流区：控制为最多 5 列，图片大小适中大方 */
         .masonry-grid {
             columns: 5;
             column-gap: 1rem;
@@ -387,7 +380,6 @@
             transform: scale(1.02);
         }
 
-        /* 独立札记展厅：精确对齐时间轴 */
         .journals-section {
             position: relative;
             padding-left: 3rem;
@@ -437,7 +429,6 @@
             transform: translate(calc(-100% - 8px), 8px); 
         }
 
-        /* 札记区明信片 */
         .postcard-frame {
             background-color: #f7f3ea; 
             border: 1px solid #dcd4c1;
@@ -507,7 +498,6 @@
             font-weight: 500;
         }
 
-        /* 灯箱大图预览 */
         #lightbox {
             position: fixed;
             top: 0;
@@ -542,7 +532,6 @@
             transform: scale(0.97);
         }
 
-        /* 切换按钮 */
         .lightbox-nav {
             position: absolute;
             top: 50%;
@@ -602,7 +591,6 @@
         <source src="Kan R. Gao - Born a Stranger.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- 首屏海报 -->
     <section class="hero-section" id="heroSection">
         <div class="hero-overlay"></div>
         <div class="hero-content">
@@ -612,7 +600,6 @@
         <div class="scroll-hint">SCROLL DOWN ↓</div>
     </section>
 
-    <!-- 主体双栏区域 -->
     <div class="main-layout">
         <aside class="sidebar">
             <div class="sidebar-top">
@@ -646,7 +633,6 @@
         </main>
     </div>
 
-    <!-- 影院级灯箱大图预览 -->
     <div id="lightbox" onclick="closeLightbox(event)">
         <button class="lightbox-nav lightbox-prev" onclick="event.stopPropagation(); changeLightboxImg(-1)">‹</button>
         <img id="lightboxImg" src="" alt="Zoomed view">
@@ -663,9 +649,10 @@
         let lightboxImages = [];
         let lightboxCurrentIndex = 0;
 
-        // 1. 优化滚轮交互：提高跟随系数，消除拖沓感
+        // 【优化2】：重构平滑滚轮与惯性余晖模型 (Inertia Physics Model)
         let currentScrollY = window.scrollY;
         let targetScrollY = window.scrollY;
+        let velocity = 0;
         let isSmoothScrolling = false;
 
         window.addEventListener('wheel', (e) => {
@@ -673,8 +660,13 @@
             if (box && box.style.display === 'flex') return;
 
             e.preventDefault();
-            targetScrollY += e.deltaY * 0.9;
+            // 增大了位移跨度 (1.55)，大幅消除短距滑动的凝滞感
+            const delta = e.deltaY * 1.55;
+            targetScrollY += delta;
             targetScrollY = Math.max(0, Math.min(targetScrollY, document.documentElement.scrollHeight - window.innerHeight));
+
+            // 附加速度响应
+            velocity += delta * 0.08;
 
             if (!isSmoothScrolling) {
                 requestAnimationFrame(updateSmoothScroll);
@@ -683,22 +675,27 @@
 
         function updateSmoothScroll() {
             isSmoothScrolling = true;
-            const diff = targetScrollY - currentScrollY;
             
-            // 追赶系数由原先的 0.085 提高至 0.22，响应更迅速不黏手
-            currentScrollY += diff * 0.22;
+            // 结合追赶位移与物理惯性衰减
+            const diff = targetScrollY - currentScrollY;
+            currentScrollY += diff * 0.18 + velocity;
+            velocity *= 0.85; // 惯性余晖衰减系数
+
+            // 边界约束
+            currentScrollY = Math.max(0, Math.min(currentScrollY, document.documentElement.scrollHeight - window.innerHeight));
 
             window.scrollTo(0, currentScrollY);
 
-            if (Math.abs(diff) > 0.5) {
+            if (Math.abs(diff) > 0.3 || Math.abs(velocity) > 0.05) {
                 requestAnimationFrame(updateSmoothScroll);
             } else {
                 isSmoothScrolling = false;
                 currentScrollY = targetScrollY;
+                velocity = 0;
             }
         }
 
-        // 点击星空连线
+        // 星空爆裂
         document.addEventListener('mousedown', (e) => {
             createConstellationBurst(e.clientX, e.clientY);
         });
@@ -725,11 +722,11 @@
             });
         }
 
-        // 页面滚动监听
         window.addEventListener('scroll', () => {
             if (!isSmoothScrolling) {
                 currentScrollY = window.scrollY;
                 targetScrollY = window.scrollY;
+                velocity = 0;
             }
 
             const header = document.getElementById('siteHeader');
@@ -751,13 +748,13 @@
 
         function scrollToTop() {
             targetScrollY = 0;
+            velocity = 0;
             window.scrollTo({
                 top: 0,
                 behavior: 'smooth'
             });
         }
 
-        // 鼠标光标
         const cursor = document.getElementById('customCursor');
         document.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px';
@@ -776,7 +773,6 @@
             }
         });
 
-        // 粒子背景引擎
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
         let ambientParticles = [];
@@ -865,13 +861,30 @@
         }
         animateParticles();
 
+        // 统一的多重倒序排序算法 (日期降序 + JSON原始索引降序)
+        function sortDataDesc(list) {
+            return list.sort((a, b) => {
+                if (b.date !== a.date) {
+                    return b.date.localeCompare(a.date);
+                }
+                // 当日期一致时，JSON 内部索引更大的排在前面 (如 8月1日/编号2 > 8月1日/编号1)
+                return b._originalIndex - a._originalIndex;
+            });
+        }
+
         async function initGallery() {
             try {
                 const res = await fetch('data.json');
-                allData = await res.json();
+                const rawData = await res.json();
 
-                // 按日期做通用降序排序 (最新在前)
-                allData.sort((a, b) => b.date.localeCompare(a.date));
+                // 记录每条数据在 json 中的原始编号/位置
+                allData = rawData.map((item, idx) => ({
+                    ...item,
+                    _originalIndex: idx
+                }));
+
+                // 【优化1】：全局排序逻辑调整为多级彻底倒序
+                sortDataDesc(allData);
 
                 const journalPool = allData.filter(item => item.journal);
                 if (journalPool.length > 0) {
@@ -901,13 +914,12 @@
 
             const yearContainer = document.getElementById('yearFilterContainer');
             yearContainer.innerHTML = '';
-            // 年份从高到低排列 (例如 2026 -> 2025 -> 2024)
             Object.keys(yearMap).sort().reverse().forEach(year => {
                 const wrapper = document.createElement('div');
                 const yBtn = document.createElement('button');
                 yBtn.className = 'filter-item year-btn-' + year;
                 yBtn.innerText = year;
-                yBtn.onclick = () => toggleYear(year, Array.from(yearMap[year]).sort(), wrapper);
+                yBtn.onclick = () => toggleYear(year, Array.from(yearMap[year]).sort().reverse(), wrapper);
                 wrapper.appendChild(yBtn);
                 yearContainer.appendChild(wrapper);
             });
@@ -959,7 +971,6 @@
             subContainer.style.marginTop = '0.5rem';
             subContainer.style.borderLeft = '1px solid rgba(197, 160, 89, 0.2)';
 
-            // 年份降序
             Object.keys(journalYearMap).sort().reverse().forEach(year => {
                 const yWrapper = document.createElement('div');
                 
@@ -972,7 +983,6 @@
                 mContainer.className = 'sub-months';
                 mContainer.style.display = 'none';
 
-                // 月份也倒序排列，优先跳到最新的月份
                 Array.from(journalYearMap[year]).sort().reverse().forEach(month => {
                     const mBtn = document.createElement('button');
                     mBtn.className = 'month-btn';
@@ -1017,6 +1027,7 @@
             if (targetEl) {
                 const targetPos = targetEl.getBoundingClientRect().top + window.pageYOffset - 80;
                 targetScrollY = targetPos;
+                velocity = 0;
                 window.scrollTo({
                     top: targetPos,
                     behavior: 'smooth'
@@ -1108,7 +1119,6 @@
             renderContent();
         }
 
-        // 4. 瀑布流渲染：确保时间最新的图片排在最上面
         function renderContent() {
             const container = document.getElementById('contentArea');
             container.innerHTML = '';
@@ -1118,8 +1128,8 @@
                 return;
             }
 
-            // 数据进行时间降序排列
-            let filteredData = [...allData].sort((a, b) => b.date.localeCompare(a.date));
+            // 保持整体倒序逻辑
+            let filteredData = sortDataDesc([...allData]);
             let titleText = "ALL ARCHIVES";
 
             if (selectedYear) {
@@ -1160,10 +1170,9 @@
             container.appendChild(gridDiv);
         }
 
-        // 3. 札记区渲染：同样进行时间降序倒序排列（最上面的为最新）
         function renderJournalsView(container) {
-            // 时间降序
-            const journalData = allData.filter(item => item.journal).sort((a, b) => b.date.localeCompare(a.date));
+            // 【优化1】：过滤后严格执行“日期+编号”彻底双重倒序
+            const journalData = sortDataDesc(allData.filter(item => item.journal));
             lightboxImages = journalData.map(i => i.url);
 
             const headerDiv = document.createElement('div');
