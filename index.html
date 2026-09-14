@@ -5,7 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>STELLE SCINTILLANTI - Photography Exhibition</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
+    
+    <!-- 引入 Lenis 官方平滑滚动库 -->
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+    
     <style>
+        /* Lenis 官方基础 CSS 适配 */
+        html.lenis, html.lenis body {
+            height: auto;
+        }
+        .lenis.lenis-smooth {
+            scroll-behavior: auto !important;
+        }
+        .lenis.lenis-smooth [data-lenis-prevent] {
+            overscroll-behavior: contain;
+        }
+        .lenis.lenis-stopped {
+            overflow: hidden;
+        }
+        .lenis.lenis-scrolling iframe {
+            pointer-events: none;
+        }
+
         :root {
             --bg-color: #0b0b0b;
             --sidebar-bg: #030303;
@@ -403,10 +424,11 @@
             scroll-margin-top: 6rem;
         }
 
+        /* 修复：时间线圆点与时间标签改为底部平齐 */
         .timeline-dot {
             position: absolute;
             left: -3rem;
-            top: 2rem;
+            bottom: 2rem; /* 从 top:2rem 改为 bottom:2rem */
             width: 7px;
             height: 7px;
             background-color: var(--accent-bronze);
@@ -419,14 +441,14 @@
         .timeline-label {
             position: absolute;
             left: -3rem;
-            top: 2rem;
+            bottom: 2rem; /* 从 top:2rem 改为 bottom:2rem */
             font-size: 0.65rem;
             letter-spacing: 0.15em;
             color: var(--text-sub);
             text-align: right;
             width: auto;
             font-weight: 400;
-            transform: translate(calc(-100% - 8px), 8px); 
+            transform: translate(calc(-100% - 8px), 4px); 
         }
 
         .postcard-frame {
@@ -649,59 +671,44 @@
         let lightboxImages = [];
         let lightboxCurrentIndex = 0;
 
-        // 【优化1】：修正平滑滚轮与正向惯性模拟
-        let currentScrollY = window.scrollY;
-        let targetScrollY = window.scrollY;
-        let inertiaVelocity = 0;
-        let isSmoothScrolling = false;
+        // 初始化 Lenis 顶级平滑滚动
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            smoothWheel: true,
+            touchMultiplier: 2,
+        });
 
-        window.addEventListener('wheel', (e) => {
-            const box = document.getElementById('lightbox');
-            if (box && box.style.display === 'flex') return;
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
 
-            e.preventDefault();
+        // Lenis 滚动事件处理 Header & BackToTop
+        lenis.on('scroll', (e) => {
+            const header = document.getElementById('siteHeader');
+            const backToTop = document.getElementById('backToTopBtn');
+            let scrollTop = e.scroll;
 
-            // 基础滚动位移 (跟手感)
-            const step = e.deltaY * 1.2;
-            targetScrollY += step;
-            targetScrollY = Math.max(0, Math.min(targetScrollY, document.documentElement.scrollHeight - window.innerHeight));
-
-            // 正向惯性叠加：向下滑 (deltaY > 0) 产生正向惯性；向上滑产生负向惯性
-            inertiaVelocity += step * 0.15;
-
-            if (!isSmoothScrolling) {
-                requestAnimationFrame(updateSmoothScroll);
-            }
-        }, { passive: false });
-
-        function updateSmoothScroll() {
-            isSmoothScrolling = true;
-            
-            // 逼近目标点
-            const diff = targetScrollY - currentScrollY;
-            
-            // 组合平滑插值与正向物理惯性
-            currentScrollY += diff * 0.12 + inertiaVelocity;
-            
-            // 惯性阻尼衰减
-            inertiaVelocity *= 0.82; 
-
-            // 边界约束
-            const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-            currentScrollY = Math.max(0, Math.min(currentScrollY, maxScroll));
-
-            window.scrollTo(0, currentScrollY);
-
-            if (Math.abs(diff) > 0.4 || Math.abs(inertiaVelocity) > 0.05) {
-                requestAnimationFrame(updateSmoothScroll);
+            if (scrollTop > 200) {
+                header.classList.add('hidden');
             } else {
-                isSmoothScrolling = false;
-                currentScrollY = targetScrollY;
-                inertiaVelocity = 0;
+                header.classList.remove('hidden');
             }
+
+            if (scrollTop > 500) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        function scrollToTop() {
+            lenis.scrollTo(0, { duration: 1.2 });
         }
 
-        // 星空爆裂
+        // 星空爆裂与鼠标跟随
         document.addEventListener('mousedown', (e) => {
             createConstellationBurst(e.clientX, e.clientY);
         });
@@ -722,43 +729,7 @@
                     decay: 0.008 + Math.random() * 0.005
                 });
             }
-            constellationBursts.push({
-                stars: stars,
-                life: 1.0
-            });
-        }
-
-        window.addEventListener('scroll', () => {
-            if (!isSmoothScrolling) {
-                currentScrollY = window.scrollY;
-                targetScrollY = window.scrollY;
-                inertiaVelocity = 0;
-            }
-
-            const header = document.getElementById('siteHeader');
-            const backToTop = document.getElementById('backToTopBtn');
-            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-            if (scrollTop > 200) {
-                header.classList.add('hidden');
-            } else {
-                header.classList.remove('hidden');
-            }
-
-            if (scrollTop > 500) {
-                backToTop.classList.add('visible');
-            } else {
-                backToTop.classList.remove('visible');
-            }
-        });
-
-        function scrollToTop() {
-            targetScrollY = 0;
-            inertiaVelocity = 0;
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+            constellationBursts.push({ stars: stars, life: 1.0 });
         }
 
         const cursor = document.getElementById('customCursor');
@@ -818,11 +789,7 @@
 
         function animateParticles() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            ambientParticles.forEach(p => {
-                p.update();
-                p.draw();
-            });
+            ambientParticles.forEach(p => { p.update(); p.draw(); });
 
             for (let i = constellationBursts.length - 1; i >= 0; i--) {
                 let burst = constellationBursts[i];
@@ -867,7 +834,6 @@
         }
         animateParticles();
 
-        // 统一的多重倒序排序算法 (日期降序 + JSON原始索引降序)
         function sortDataDesc(list) {
             return list.sort((a, b) => {
                 if (b.date !== a.date) {
@@ -997,6 +963,7 @@
                     mContainer.appendChild(mBtn);
                 });
 
+                // 点击年份：定位到该年份最新的照片（最顶部）
                 yBtn.onclick = () => {
                     const isVisible = mContainer.style.display === 'flex';
                     subContainer.querySelectorAll('.sub-months').forEach(el => el.style.display = 'none');
@@ -1019,7 +986,9 @@
             if (container) container.innerHTML = '';
         }
 
-        // 【优化2】：索引定位到该年份/月份“最早的那张照片”（即该时间段的最底部）
+        // 定位算法修复：
+        // 选年份 (month 为 null) -> 定位到该年份第一张（最新照片）
+        // 选月份 (month 有值)   -> 定位到该月份最后一张（最老的照片，即月尾/最底）
         function scrollToJournalTarget(year, month) {
             let matches = [];
             const prefix = month ? `${year}.${month}` : `${year}`;
@@ -1029,16 +998,8 @@
             });
 
             if (matches.length > 0) {
-                // 在倒序数组中，最后匹配项代表该时间段最早的照片
-                const earliestTargetEl = matches[matches.length - 1];
-                const targetPos = earliestTargetEl.getBoundingClientRect().top + window.pageYOffset - 120;
-                
-                targetScrollY = targetPos;
-                inertiaVelocity = 0;
-                window.scrollTo({
-                    top: targetPos,
-                    behavior: 'smooth'
-                });
+                let targetEl = month ? matches[matches.length - 1] : matches[0];
+                lenis.scrollTo(targetEl, { offset: -120, duration: 1.2 });
             }
         }
 
@@ -1193,8 +1154,8 @@
                 wrapper.className = 'journal-card-wrapper';
                 wrapper.setAttribute('data-date', item.date);
                 
-                // 【优化2】：倒序时，顶部的“最新照片”不带时间标注；
-                // 只有当它是该日期组的最底部一张（即下一张照片的日期改变或到达最底）时才显示日期/时间点
+                // 倒序逻辑：顶部的最新照片不显示标签；
+                // 只有当它是该日期组的最底部一张（即下一张照片日期改变或到达最底部）时才在底部显示时间轴标签
                 const nextItem = journalData[index + 1];
                 let showDateLabel = (!nextItem || nextItem.date !== item.date);
 
@@ -1229,11 +1190,13 @@
             const img = document.getElementById('lightboxImg');
             img.src = lightboxImages[lightboxCurrentIndex];
             box.style.display = 'flex';
+            lenis.stop(); // 弹窗开启时禁用页面底层滑动
         }
 
         function closeLightbox(e) {
             if (e.target.id === 'lightbox') {
                 document.getElementById('lightbox').style.display = 'none';
+                lenis.start(); // 恢复滑动
             }
         }
 
@@ -1258,7 +1221,10 @@
             if (box.style.display === 'flex') {
                 if (e.key === 'ArrowLeft') changeLightboxImg(-1);
                 if (e.key === 'ArrowRight') changeLightboxImg(1);
-                if (e.key === 'Escape') box.style.display = 'none';
+                if (e.key === 'Escape') {
+                    box.style.display = 'none';
+                    lenis.start();
+                }
             }
         });
 
