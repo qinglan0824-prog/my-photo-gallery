@@ -410,7 +410,7 @@
         .journals-section::before {
             content: '';
             position: absolute;
-            left: 3rem;
+            left: 4rem;
             top: 1rem;
             bottom: 1rem;
             width: 1px;
@@ -427,7 +427,7 @@
 
         .timeline-dot {
             position: absolute;
-            left: -3rem;
+            left: -2rem;
             bottom: 2rem;
             width: 7px;
             height: 7px;
@@ -440,7 +440,7 @@
 
         .timeline-label {
             position: absolute;
-            left: -3rem;
+            left: -2rem;
             bottom: 2rem;
             font-size: 0.65rem;
             letter-spacing: 0.15em;
@@ -456,8 +456,8 @@
             border: 1px solid #dcd4c1;
             padding: 1.4rem;
             box-shadow: 0 25px 60px rgba(0,0,0,0.5), inset 0 0 30px rgba(197, 160, 89, 0.05);
-            width: 85%; 
-            margin-left: 6rem;
+            width: 86%; 
+            margin-left: 7rem;
             transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.5s ease;
         }
 
@@ -1072,7 +1072,7 @@
 
             if (matches.length > 0) {
                 let targetEl = month ? matches[matches.length - 1] : matches[0];
-                lenis.scrollTo(targetEl, { offset: 150, duration: 1.2 });
+                lenis.scrollTo(targetEl, { offset: 350, duration: 1.2 });
             }
         }
 
