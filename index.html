@@ -375,16 +375,16 @@
             transform: scale(1.015);
         }
 
-        /* 独立札记展厅（时间轴靠左，照片整体向左扩展并放大） */
+        /* 独立札记展厅：精确时间轴对齐与适当留白 */
         .journals-section {
             position: relative;
-            padding-left: 2.8rem; 
+            padding-left: 5rem; /* 给时间轴留足空间，避免与照片贴太近 */
         }
 
         .journals-section::before {
             content: '';
             position: absolute;
-            left: 0.5rem; /* 时间轴精确对齐 */
+            left: 2rem; /* 轴线绝对定位 */
             top: 1rem;
             bottom: 1rem;
             width: 1px;
@@ -400,19 +400,19 @@
 
         .timeline-dot {
             position: absolute;
-            left: 0.5rem; /* 圆圈精准落在线上 */
+            left: 2rem; /* 精确落在轴线上 */
             top: 2rem;
             width: 7px;
             height: 7px;
             background-color: var(--accent-bronze);
             border-radius: 50%;
-            transform: translateX(-3px);
+            transform: translateX(-3.5px); /* 居中校准 */
             box-shadow: 0 0 8px var(--accent-bronze);
         }
 
         .timeline-label {
             position: absolute;
-            left: -5.5rem; /* 移到时间轴左侧 */
+            left: -3rem; /* 紧贴轴线左侧 */
             top: 1.85rem;
             font-size: 0.65rem;
             letter-spacing: 0.15em;
@@ -422,14 +422,14 @@
             font-weight: 400;
         }
 
-        /* 札记区明信片：复古泛黄边框，右侧宽度扩增 */
+        /* 札记区明信片：复古泛黄边框，右移防拥挤 */
         .postcard-frame {
             background-color: #f7f3ea; 
             border: 1px solid #dcd4c1;
             padding: 1.4rem;
             box-shadow: 0 25px 60px rgba(0,0,0,0.5), inset 0 0 30px rgba(197, 160, 89, 0.05);
-            width: 96%; /* 进一步拉宽，给照片更多空间 */
-            margin-left: 1.2rem; /* 向左扩张 */
+            width: 92%; 
+            margin-left: 1.5rem; /* 往右挪了一点，确保与左侧时间标签保持舒适的呼吸感 */
             transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.5s ease;
         }
 
@@ -551,6 +551,10 @@
             .content-area { padding: 3rem 2rem; }
             .masonry-grid { columns: 1; }
             .postcard-frame { width: 100%; margin-left: 0; }
+            .journals-section { padding-left: 1.5rem; }
+            .journals-section::before { left: 0.5rem; }
+            .timeline-dot { left: 0.5rem; }
+            .timeline-label { left: -4.5rem; }
         }
     </style>
 </head>
@@ -629,27 +633,31 @@
         let lightboxImages = [];
         let lightboxCurrentIndex = 0;
 
-        // 点击爆开金色粒子特效
+        // 点击产生优雅缓慢的“微型星座连线”特效
         document.addEventListener('mousedown', (e) => {
-            createClickBurst(e.clientX, e.clientY);
+            createConstellationBurst(e.clientX, e.clientY);
         });
 
-        function createClickBurst(x, y) {
-            const burstCount = 14;
-            for (let i = 0; i < burstCount; i++) {
-                const angle = (Math.PI * 2 / burstCount) * i + (Math.random() * 0.4 - 0.2);
-                const speed = Math.random() * 2.5 + 1.2;
-                particles.push({
-                    x: x,
-                    y: y,
-                    size: Math.random() * 1.8 + 0.6,
-                    speedX: Math.cos(angle) * speed,
-                    speedY: Math.sin(angle) * speed,
-                    opacity: 0.9,
-                    decay: Math.random() * 0.03 + 0.015,
-                    isBurst: true
+        function createConstellationBurst(x, y) {
+            const count = 5; // 5颗优雅的小恒星
+            const stars = [];
+            for (let i = 0; i < count; i++) {
+                const angle = (Math.PI * 2 / count) * i + (Math.random() * 0.5);
+                const distance = Math.random() * 35 + 15;
+                stars.push({
+                    x: x + Math.cos(angle) * distance,
+                    y: y + Math.sin(angle) * distance,
+                    vx: (Math.random() - 0.5) * 0.15, // 极慢的漂移速度
+                    vy: (Math.random() - 0.5) * 0.15,
+                    size: Math.random() * 1.2 + 0.6,
+                    opacity: 0.85,
+                    decay: 0.008 + Math.random() * 0.005 // 缓慢淡出
                 });
             }
+            constellationBursts.push({
+                stars: stars,
+                life: 1.0
+            });
         }
 
         // 滚动监听
@@ -697,10 +705,11 @@
             }
         });
 
-        // 粒子背景与点击爆开动画
+        // 背景粒子与星座连线系统
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
-        let particles = [];
+        let ambientParticles = [];
+        let constellationBursts = [];
 
         function resizeCanvas() {
             canvas.width = window.innerWidth;
@@ -714,10 +723,9 @@
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
                 this.size = Math.random() * 1.2 + 0.2;
-                this.speedX = Math.random() * 0.15 - 0.07;
-                this.speedY = Math.random() * 0.15 - 0.07;
+                this.speedX = Math.random() * 0.12 - 0.06;
+                this.speedY = Math.random() * 0.12 - 0.06;
                 this.opacity = Math.random() * 0.3 + 0.05;
-                this.isBurst = false;
             }
             update() {
                 this.x += this.speedX; 
@@ -733,32 +741,60 @@
             }
         }
 
-        for (let i = 0; i < 30; i++) particles.push(new AmbientParticle());
+        for (let i = 0; i < 30; i++) ambientParticles.push(new AmbientParticle());
 
         function animateParticles() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            for (let i = particles.length - 1; i >= 0; i--) {
-                let p = particles[i];
-                if (p.isBurst) {
-                    p.x += p.speedX;
-                    p.y += p.speedY;
-                    p.speedX *= 0.94; // 阻尼减速
-                    p.speedY *= 0.94;
-                    p.opacity -= p.decay;
-                    if (p.opacity <= 0) {
-                        particles.splice(i, 1);
-                        continue;
-                    }
-                    ctx.fillStyle = `rgba(197, 160, 89, ${p.opacity})`;
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                    ctx.fill();
-                } else {
-                    p.update();
-                    p.draw();
+            // 绘制常驻背景微粒
+            ambientParticles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            // 绘制点击产生的星座连线特效
+            for (let i = constellationBursts.length - 1; i >= 0; i--) {
+                let burst = constellationBursts[i];
+                let stars = burst.stars;
+
+                // 更新星位
+                stars.forEach(s => {
+                    s.x += s.vx;
+                    s.y += s.vy;
+                    s.opacity -= s.decay;
+                });
+
+                if (stars[0].opacity <= 0) {
+                    constellationBursts.splice(i, 1);
+                    continue;
                 }
+
+                // 绘制淡淡的星座连线
+                ctx.strokeStyle = `rgba(197, 160, 89, ${stars[0].opacity * 0.35})`;
+                ctx.lineWidth = 0.6;
+                ctx.beginPath();
+                for (let j = 0; j < stars.length; j++) {
+                    for (let k = j + 1; k < stars.length; k++) {
+                        let dx = stars[j].x - stars[k].x;
+                        let dy = stars[j].y - stars[k].y;
+                        let dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 55) { // 邻近的星连成线
+                            ctx.moveTo(stars[j].x, stars[j].y);
+                            ctx.lineTo(stars[k].x, stars[k].y);
+                        }
+                    }
+                }
+                ctx.stroke();
+
+                // 绘制星座节点
+                stars.forEach(s => {
+                    ctx.fillStyle = `rgba(197, 160, 89, ${s.opacity})`;
+                    ctx.beginPath();
+                    ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+                    ctx.fill();
+                });
             }
+
             requestAnimationFrame(animateParticles);
         }
         animateParticles();
