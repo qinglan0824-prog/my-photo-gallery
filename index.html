@@ -224,6 +224,7 @@
             min-height: 100vh;
         }
 
+        /* 侧边栏布局：拉开三大板块间距 */
         .sidebar {
             width: 300px;
             background-color: var(--sidebar-bg);
@@ -248,7 +249,7 @@
         .sidebar-top {
             display: flex;
             flex-direction: column;
-            gap: 2.5rem;
+            gap: 3rem; /* 增大整体行距区隔 */
         }
 
         .sidebar-brand {
@@ -264,7 +265,7 @@
         .filter-group {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.6rem;
         }
 
         .filter-title {
@@ -272,7 +273,7 @@
             letter-spacing: 0.2em;
             color: #555;
             text-transform: uppercase;
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.4rem;
         }
 
         .filter-item {
@@ -519,14 +520,13 @@
             font-weight: 500;
         }
 
-        /* 放映室 Screening Room 专有 CSS */
+        /* 放映室 Screening Room 容器加长 + 匀速流畅减速 */
         .screening-room-container {
-            height: 75vh;
+            height: 85vh; /* 高度拉长，增加下方视野空间 */
             overflow: hidden;
             position: relative;
-            /* 上下渐隐 Mask 蒙版处理 */
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
-            mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
         }
 
         .screening-columns-grid {
@@ -549,28 +549,25 @@
             will-change: transform;
         }
 
-        /* 向上流动动画 */
-        .track-up {
-            animation: scrollUp 45s linear infinite;
-        }
-        /* 向下流动动画 */
-        .track-down {
-            animation: scrollDown 48s linear infinite;
-        }
+        /* 给 5 列设置独立、极度缓慢且互不相同的流动周期（单位：秒） */
+        .col-track-0 { animation: scrollUp 90s linear infinite; }
+        .col-track-1 { animation: scrollDown 110s linear infinite; }
+        .col-track-2 { animation: scrollUp 95s linear infinite; }
+        .col-track-3 { animation: scrollDown 115s linear infinite; }
+        .col-track-4 { animation: scrollUp 105s linear infinite; }
 
-        /* 鼠标悬停时暂停该列动画 */
         .screening-column:hover .screening-track {
             animation-play-state: paused;
         }
 
         @keyframes scrollUp {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-50%); }
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(0, -50%, 0); }
         }
 
         @keyframes scrollDown {
-            0% { transform: translateY(-50%); }
-            100% { transform: translateY(0); }
+            0% { transform: translate3d(0, -50%, 0); }
+            100% { transform: translate3d(0, 0, 0); }
         }
 
         .screening-card {
@@ -702,22 +699,27 @@
             <div class="sidebar-top">
                 <div class="sidebar-brand">STELLE SCINTILLANTI</div>
 
+                <!-- 大块 1: ARCHIVES -->
                 <div class="filter-group">
                     <div class="filter-title">ARCHIVES</div>
                     <button class="filter-item active" id="allWorksBtn" onclick="resetAllFilters()">All Works</button>
                     <div id="yearFilterContainer"></div>
                 </div>
 
-                <div class="filter-group" style="margin-top: 1.2rem;">
+                <!-- 大块 2: LOCATIONS -->
+                <div class="filter-group">
                     <div class="filter-title">LOCATIONS</div>
                     <div id="locationFilterContainer"></div>
                 </div>
 
-                <div class="filter-group" style="margin-top: 1.2rem;">
+                <!-- 大块 3: EXHIBITION -->
+                <div class="filter-group">
                     <div class="filter-title">EXHIBITION</div>
                     <button class="filter-item" id="journalsViewBtn" onclick="switchViewToJournals()">Journals & Notes</button>
-                    <button class="filter-item" id="screeningRoomBtn" onclick="switchViewToScreeningRoom()">Screening Room</button>
+                    <!-- 索引节点挂载于 Journals 下方 -->
                     <div id="journalTimeIndexContainer"></div>
+                    <!-- Screening Room 调整至最下方 -->
+                    <button class="filter-item" id="screeningRoomBtn" style="margin-top: 0.4rem;" onclick="switchViewToScreeningRoom()">Screening Room</button>
                 </div>
             </div>
 
@@ -743,11 +745,10 @@
         let selectedMonth = null;
         let selectedLocation = null;
         
-        let currentViewMode = 'all'; // 'all', 'journals', 'screening'
+        let currentViewMode = 'all'; 
         let lightboxImages = [];
         let lightboxCurrentIndex = 0;
 
-        // 初始化 Lenis 顶级平滑滚动
         const lenis = new Lenis({
             duration: 1.2,
             easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -783,7 +784,6 @@
             lenis.scrollTo(0, { duration: 1.2 });
         }
 
-        // 星空爆裂与鼠标跟随
         document.addEventListener('mousedown', (e) => {
             createConstellationBurst(e.clientX, e.clientY);
         });
@@ -1061,7 +1061,7 @@
             if (container) container.innerHTML = '';
         }
 
-        // 定位算法修正：偏移量设为 -260，精准对齐顶部白框留白
+        // 纠正定位：改为正向 offset 120，将相框完美呈现在视口中下方 (匹配图 2)
         function scrollToJournalTarget(year, month) {
             let matches = [];
             const prefix = month ? `${year}.${month}` : `${year}`;
@@ -1072,7 +1072,7 @@
 
             if (matches.length > 0) {
                 let targetEl = month ? matches[matches.length - 1] : matches[0];
-                lenis.scrollTo(targetEl, { offset: -260, duration: 1.2 });
+                lenis.scrollTo(targetEl, { offset: 120, duration: 1.2 });
             }
         }
 
@@ -1275,9 +1275,7 @@
             container.appendChild(section);
         }
 
-        // 放映室 Screening Room 渲染逻辑
         function renderScreeningRoomView(container) {
-            // 洗牌算法：彻底随机打乱所有图片
             const shuffled = [...allData].sort(() => Math.random() - 0.5);
             lightboxImages = shuffled.map(i => i.url);
 
@@ -1292,7 +1290,6 @@
             const gridDiv = document.createElement('div');
             gridDiv.className = 'screening-columns-grid';
 
-            // 分为 5 列
             const columns = [[], [], [], [], []];
             shuffled.forEach((item, idx) => {
                 columns[idx % 5].push(item);
@@ -1303,11 +1300,9 @@
                 colDiv.className = 'screening-column';
 
                 const trackDiv = document.createElement('div');
-                // 1, 3, 5 列向上，2, 4 列向下
-                const isUp = (colIdx % 2 === 0);
-                trackDiv.className = `screening-track ${isUp ? 'track-up' : 'track-down'}`;
+                // 专属错速 CSS 动画类名，确保绝无卡顿与同速感
+                trackDiv.className = `screening-track col-track-${colIdx}`;
 
-                // 复制两份节点实现无缝无痛循环 (A-B-C + A-B-C)
                 const doubleItems = [...colItems, ...colItems];
                 doubleItems.forEach((item) => {
                     const originalIndex = shuffled.findIndex(s => s === item);
