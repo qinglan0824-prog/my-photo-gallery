@@ -404,7 +404,7 @@
 
         .journals-section {
             position: relative;
-            padding-left: 3rem;
+            padding-left: 5rem;
         }
 
         .journals-section::before {
@@ -427,7 +427,7 @@
 
         .timeline-dot {
             position: absolute;
-            left: -3rem;
+            left: -5rem;
             bottom: 2rem;
             width: 7px;
             height: 7px;
@@ -440,7 +440,7 @@
 
         .timeline-label {
             position: absolute;
-            left: -3rem;
+            left: -5rem;
             bottom: 2rem;
             font-size: 0.65rem;
             letter-spacing: 0.15em;
@@ -448,7 +448,7 @@
             text-align: right;
             width: auto;
             font-weight: 400;
-            transform: translate(calc(-100% - 8px), 4px); 
+            transform: translate(calc(-100% - 8px), 8px); 
         }
 
         .postcard-frame {
@@ -456,7 +456,7 @@
             border: 1px solid #dcd4c1;
             padding: 1.4rem;
             box-shadow: 0 25px 60px rgba(0,0,0,0.5), inset 0 0 30px rgba(197, 160, 89, 0.05);
-            width: 90%; 
+            width: 80%; 
             margin-left: 6rem;
             transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.5s ease;
         }
@@ -1072,7 +1072,7 @@
 
             if (matches.length > 0) {
                 let targetEl = month ? matches[matches.length - 1] : matches[0];
-                lenis.scrollTo(targetEl, { offset: 120, duration: 1.2 });
+                lenis.scrollTo(targetEl, { offset: 150, duration: 1.2 });
             }
         }
 
