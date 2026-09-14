@@ -413,15 +413,18 @@
 
         .timeline-label {
             position: absolute;
-            left: -4rem; /* 放在时间轴左侧 */
-            top: 1.85rem;
-            font-size: 0.65rem;
-            letter-spacing: 0.15em;
-            color: var(--text-sub);
-            text-align: right;
-            width: 4.5rem;
-            font-weight: 400;
-        }
+            left: -3rem; /* 放在时间轴左侧 */
+            top: 2rem;
+font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: var(--text-sub);
+  text-align: right;
+  width: auto; /* 清除固定宽度以防换行或对齐偏差 */
+  font-weight: 400;
+
+  /* 向左平移自身100%，并向下适当偏移 */
+  transform: translate(-100%, 8px); 
+}
 
         /* 札记区明信片：复古泛黄边框，整体往右挪开与时间轴拉开距离，同时尺寸可以适当放大 */
         .postcard-frame {
@@ -484,13 +487,13 @@
             gap: 0.3rem;
             font-size: 0.7rem;
             letter-spacing: 0.15em;
-            color: var(--text-sub);
+            color: var(--accent-bronze);
             flex-shrink: 0;
             font-weight: 400;
         }
 
         .info-loc {
-            color: var(--accent-bronze);
+            color: var(--text-sub);
             font-weight: 500;
         }
 
