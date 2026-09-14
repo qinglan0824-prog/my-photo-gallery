@@ -313,7 +313,7 @@
             letter-spacing: 0.1em;
         }
 
-        /* 右侧展区铺满 + 切换时的轻量淡入动画 */
+        /* 右侧展区铺满 */
         .content-area {
             flex: 1;
             padding: 5rem 6rem 12rem 7rem;
@@ -352,7 +352,6 @@
             animation: itemFadeIn 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
 
-        /* 瀑布流每个图片错落出现的微动效果 */
         .masonry-item:nth-child(3n+1) { animation-delay: 0.05s; }
         .masonry-item:nth-child(3n+2) { animation-delay: 0.1s; }
         .masonry-item:nth-child(3n+3) { animation-delay: 0.15s; }
@@ -376,16 +375,16 @@
             transform: scale(1.015);
         }
 
-        /* 独立札记展厅 */
+        /* 独立札记展厅（时间轴靠左，照片整体向左扩展并放大） */
         .journals-section {
             position: relative;
-            padding-left: 4.5rem; 
+            padding-left: 2.8rem; 
         }
 
         .journals-section::before {
             content: '';
             position: absolute;
-            left: 1.2rem; 
+            left: 0.5rem; /* 时间轴精确对齐 */
             top: 1rem;
             bottom: 1rem;
             width: 1px;
@@ -401,7 +400,7 @@
 
         .timeline-dot {
             position: absolute;
-            left: 1.2rem; 
+            left: 0.5rem; /* 圆圈精准落在线上 */
             top: 2rem;
             width: 7px;
             height: 7px;
@@ -413,22 +412,24 @@
 
         .timeline-label {
             position: absolute;
-            left: -2.8rem;
-            top: 2.8rem;
+            left: -5.5rem; /* 移到时间轴左侧 */
+            top: 1.85rem;
             font-size: 0.65rem;
             letter-spacing: 0.15em;
-            color: var(--accent-bronze);
-            white-space: nowrap;
-            font-weight: 500;
+            color: var(--text-sub);
+            text-align: right;
+            width: 4.5rem;
+            font-weight: 400;
         }
 
+        /* 札记区明信片：复古泛黄边框，右侧宽度扩增 */
         .postcard-frame {
-            background-color: #fbf9f4;
-            border: 1px solid #ebe6d9;
-            padding: 1.2rem;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
-            width: 92%;
-            margin-left: auto;
+            background-color: #f7f3ea; 
+            border: 1px solid #dcd4c1;
+            padding: 1.4rem;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5), inset 0 0 30px rgba(197, 160, 89, 0.05);
+            width: 96%; /* 进一步拉宽，给照片更多空间 */
+            margin-left: 1.2rem; /* 向左扩张 */
             transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.5s ease;
         }
 
@@ -440,7 +441,7 @@
         .postcard-img-container {
             width: 100%;
             overflow: hidden;
-            background: #eee;
+            background: #e8e3d5;
         }
 
         .postcard-img-container img {
@@ -448,7 +449,7 @@
             height: auto;
             display: block;
             object-fit: cover;
-            filter: none;
+            filter: sepia(10%) contrast(1.05);
             transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
@@ -458,18 +459,19 @@
 
         .postcard-footer {
             margin-top: 1.2rem;
-            padding-top: 0.8rem;
-            border-top: 1px solid #e6e2d6;
+            padding-top: 0.9rem;
+            border-top: 1px solid #e2dac7;
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
             gap: 2rem;
         }
 
+        /* 左下角 note 部分改为金铜色 */
         .postcard-note {
             font-size: 0.85rem;
             letter-spacing: 0.1em;
-            color: #2c2a29;
+            color: var(--accent-bronze);
             line-height: 1.7;
             font-style: italic;
         }
@@ -481,17 +483,17 @@
             gap: 0.3rem;
             font-size: 0.7rem;
             letter-spacing: 0.15em;
-            color: var(--accent-bronze);
+            color: var(--text-sub);
             flex-shrink: 0;
-            font-weight: 500;
+            font-weight: 400;
         }
 
         .info-loc {
-            color: #1a1a1a;
+            color: var(--accent-bronze);
             font-weight: 500;
         }
 
-        /* 灯箱大图预览与切换过渡动画 */
+        /* 灯箱大图预览 */
         #lightbox {
             position: fixed;
             top: 0;
@@ -548,7 +550,7 @@
             .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid #222; }
             .content-area { padding: 3rem 2rem; }
             .masonry-grid { columns: 1; }
-            .postcard-frame { width: 100%; }
+            .postcard-frame { width: 100%; margin-left: 0; }
         }
     </style>
 </head>
@@ -561,7 +563,6 @@
         <button class="bgm-btn" id="bgmToggle">SOUND: Kan R. Gao - Born a Stranger</button>
     </header>
 
-    <!-- 右下角常驻返回顶部箭头 -->
     <button id="backToTopBtn" onclick="scrollToTop()">↑</button>
 
     <audio id="bgmAudio" loop preload="auto">
@@ -580,7 +581,6 @@
 
     <!-- 主体双栏区域 -->
     <div class="main-layout">
-        <!-- 左侧索引栏 -->
         <aside class="sidebar">
             <div class="sidebar-top">
                 <div class="sidebar-brand">STELLE SCINTILLANTI</div>
@@ -607,7 +607,6 @@
             </div>
         </aside>
 
-        <!-- 右侧动态内容展厅 -->
         <main class="content-area" id="contentArea">
             <!-- 动态渲染槽 -->
         </main>
@@ -630,7 +629,30 @@
         let lightboxImages = [];
         let lightboxCurrentIndex = 0;
 
-        // 滚动监听：隐藏顶部 BGM 按钮 & 控制右下角返回顶部按钮显隐
+        // 点击爆开金色粒子特效
+        document.addEventListener('mousedown', (e) => {
+            createClickBurst(e.clientX, e.clientY);
+        });
+
+        function createClickBurst(x, y) {
+            const burstCount = 14;
+            for (let i = 0; i < burstCount; i++) {
+                const angle = (Math.PI * 2 / burstCount) * i + (Math.random() * 0.4 - 0.2);
+                const speed = Math.random() * 2.5 + 1.2;
+                particles.push({
+                    x: x,
+                    y: y,
+                    size: Math.random() * 1.8 + 0.6,
+                    speedX: Math.cos(angle) * speed,
+                    speedY: Math.sin(angle) * speed,
+                    opacity: 0.9,
+                    decay: Math.random() * 0.03 + 0.015,
+                    isBurst: true
+                });
+            }
+        }
+
+        // 滚动监听
         window.addEventListener('scroll', () => {
             const header = document.getElementById('siteHeader');
             const backToTop = document.getElementById('backToTopBtn');
@@ -675,10 +697,11 @@
             }
         });
 
-        // 粒子背景
+        // 粒子背景与点击爆开动画
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
+
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
@@ -686,7 +709,7 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
-        class Particle {
+        class AmbientParticle {
             constructor() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
@@ -694,21 +717,48 @@
                 this.speedX = Math.random() * 0.15 - 0.07;
                 this.speedY = Math.random() * 0.15 - 0.07;
                 this.opacity = Math.random() * 0.3 + 0.05;
+                this.isBurst = false;
             }
             update() {
-                this.x += this.speedX; this.y += this.speedY;
+                this.x += this.speedX; 
+                this.y += this.speedY;
                 if (this.x < 0) this.x = canvas.width; if (this.x > canvas.width) this.x = 0;
                 if (this.y < 0) this.y = canvas.height; if (this.y > canvas.height) this.y = 0;
             }
             draw() {
                 ctx.fillStyle = `rgba(197, 160, 89, ${this.opacity})`;
-                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); 
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); 
+                ctx.fill();
             }
         }
-        for (let i = 0; i < 30; i++) particles.push(new Particle());
+
+        for (let i = 0; i < 30; i++) particles.push(new AmbientParticle());
+
         function animateParticles() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => { p.update(); p.draw(); });
+            
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                if (p.isBurst) {
+                    p.x += p.speedX;
+                    p.y += p.speedY;
+                    p.speedX *= 0.94; // 阻尼减速
+                    p.speedY *= 0.94;
+                    p.opacity -= p.decay;
+                    if (p.opacity <= 0) {
+                        particles.splice(i, 1);
+                        continue;
+                    }
+                    ctx.fillStyle = `rgba(197, 160, 89, ${p.opacity})`;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+                } else {
+                    p.update();
+                    p.draw();
+                }
+            }
             requestAnimationFrame(animateParticles);
         }
         animateParticles();
@@ -731,7 +781,6 @@
             }
         }
 
-        // 构建侧边栏双重索引联动
         function buildSidebarFilters() {
             const yearMap = {};
             const locations = new Set();
@@ -745,7 +794,6 @@
                 if (item.location) locations.add(item.location);
             });
 
-            // 年份
             const yearContainer = document.getElementById('yearFilterContainer');
             yearContainer.innerHTML = '';
             Object.keys(yearMap).sort().reverse().forEach(year => {
@@ -758,7 +806,6 @@
                 yearContainer.appendChild(wrapper);
             });
 
-            // 地点
             const locContainer = document.getElementById('locationFilterContainer');
             locContainer.innerHTML = '';
             locations.forEach(loc => {
@@ -854,11 +901,10 @@
             renderContentWithAnim();
         }
 
-        // 带有淡入过渡的渲染触发器
         function renderContentWithAnim() {
             const container = document.getElementById('contentArea');
             container.style.animation = 'none';
-            container.offsetHeight; /* 触发重绘 */
+            container.offsetHeight; 
             container.style.animation = 'contentFadeIn 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards';
             renderContent();
         }
@@ -973,7 +1019,6 @@
             }
         }
 
-        // 带丝滑渐变的大图切换
         function changeLightboxImg(direction) {
             const img = document.getElementById('lightboxImg');
             img.classList.add('lightbox-animating');
