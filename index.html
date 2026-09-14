@@ -649,10 +649,10 @@
         let lightboxImages = [];
         let lightboxCurrentIndex = 0;
 
-        // 【优化2】：重构平滑滚轮与惯性余晖模型 (Inertia Physics Model)
+        // 【优化1】：修正平滑滚轮与正向惯性模拟
         let currentScrollY = window.scrollY;
         let targetScrollY = window.scrollY;
-        let velocity = 0;
+        let inertiaVelocity = 0;
         let isSmoothScrolling = false;
 
         window.addEventListener('wheel', (e) => {
@@ -660,13 +660,14 @@
             if (box && box.style.display === 'flex') return;
 
             e.preventDefault();
-            // 增大了位移跨度 (1.55)，大幅消除短距滑动的凝滞感
-            const delta = e.deltaY * 1.55;
-            targetScrollY += delta;
+
+            // 基础滚动位移 (跟手感)
+            const step = e.deltaY * 1.2;
+            targetScrollY += step;
             targetScrollY = Math.max(0, Math.min(targetScrollY, document.documentElement.scrollHeight - window.innerHeight));
 
-            // 附加速度响应
-            velocity += delta * 0.08;
+            // 正向惯性叠加：向下滑 (deltaY > 0) 产生正向惯性；向上滑产生负向惯性
+            inertiaVelocity += step * 0.15;
 
             if (!isSmoothScrolling) {
                 requestAnimationFrame(updateSmoothScroll);
@@ -676,22 +677,27 @@
         function updateSmoothScroll() {
             isSmoothScrolling = true;
             
-            // 结合追赶位移与物理惯性衰减
+            // 逼近目标点
             const diff = targetScrollY - currentScrollY;
-            currentScrollY += diff * 0.18 + velocity;
-            velocity *= 0.85; // 惯性余晖衰减系数
+            
+            // 组合平滑插值与正向物理惯性
+            currentScrollY += diff * 0.12 + inertiaVelocity;
+            
+            // 惯性阻尼衰减
+            inertiaVelocity *= 0.82; 
 
             // 边界约束
-            currentScrollY = Math.max(0, Math.min(currentScrollY, document.documentElement.scrollHeight - window.innerHeight));
+            const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+            currentScrollY = Math.max(0, Math.min(currentScrollY, maxScroll));
 
             window.scrollTo(0, currentScrollY);
 
-            if (Math.abs(diff) > 0.3 || Math.abs(velocity) > 0.05) {
+            if (Math.abs(diff) > 0.4 || Math.abs(inertiaVelocity) > 0.05) {
                 requestAnimationFrame(updateSmoothScroll);
             } else {
                 isSmoothScrolling = false;
                 currentScrollY = targetScrollY;
-                velocity = 0;
+                inertiaVelocity = 0;
             }
         }
 
@@ -726,7 +732,7 @@
             if (!isSmoothScrolling) {
                 currentScrollY = window.scrollY;
                 targetScrollY = window.scrollY;
-                velocity = 0;
+                inertiaVelocity = 0;
             }
 
             const header = document.getElementById('siteHeader');
@@ -748,7 +754,7 @@
 
         function scrollToTop() {
             targetScrollY = 0;
-            velocity = 0;
+            inertiaVelocity = 0;
             window.scrollTo({
                 top: 0,
                 behavior: 'smooth'
@@ -867,7 +873,6 @@
                 if (b.date !== a.date) {
                     return b.date.localeCompare(a.date);
                 }
-                // 当日期一致时，JSON 内部索引更大的排在前面 (如 8月1日/编号2 > 8月1日/编号1)
                 return b._originalIndex - a._originalIndex;
             });
         }
@@ -877,13 +882,11 @@
                 const res = await fetch('data.json');
                 const rawData = await res.json();
 
-                // 记录每条数据在 json 中的原始编号/位置
                 allData = rawData.map((item, idx) => ({
                     ...item,
                     _originalIndex: idx
                 }));
 
-                // 【优化1】：全局排序逻辑调整为多级彻底倒序
                 sortDataDesc(allData);
 
                 const journalPool = allData.filter(item => item.journal);
@@ -1016,18 +1019,22 @@
             if (container) container.innerHTML = '';
         }
 
+        // 【优化2】：索引定位到该年份/月份“最早的那张照片”（即该时间段的最底部）
         function scrollToJournalTarget(year, month) {
-            let targetEl = null;
-            if (month) {
-                targetEl = document.querySelector(`.journal-card-wrapper[data-date^="${year}.${month}"]`);
-            }
-            if (!targetEl) {
-                targetEl = document.querySelector(`.journal-card-wrapper[data-date^="${year}"]`);
-            }
-            if (targetEl) {
-                const targetPos = targetEl.getBoundingClientRect().top + window.pageYOffset - 80;
+            let matches = [];
+            const prefix = month ? `${year}.${month}` : `${year}`;
+            
+            matches = Array.from(document.querySelectorAll(`.journal-card-wrapper`)).filter(el => {
+                return el.getAttribute('data-date').startsWith(prefix);
+            });
+
+            if (matches.length > 0) {
+                // 在倒序数组中，最后匹配项代表该时间段最早的照片
+                const earliestTargetEl = matches[matches.length - 1];
+                const targetPos = earliestTargetEl.getBoundingClientRect().top + window.pageYOffset - 120;
+                
                 targetScrollY = targetPos;
-                velocity = 0;
+                inertiaVelocity = 0;
                 window.scrollTo({
                     top: targetPos,
                     behavior: 'smooth'
@@ -1128,7 +1135,6 @@
                 return;
             }
 
-            // 保持整体倒序逻辑
             let filteredData = sortDataDesc([...allData]);
             let titleText = "ALL ARCHIVES";
 
@@ -1171,7 +1177,6 @@
         }
 
         function renderJournalsView(container) {
-            // 【优化1】：过滤后严格执行“日期+编号”彻底双重倒序
             const journalData = sortDataDesc(allData.filter(item => item.journal));
             lightboxImages = journalData.map(i => i.url);
 
@@ -1183,15 +1188,15 @@
             const section = document.createElement('section');
             section.className = 'journals-section';
 
-            let lastDate = null;
-
             journalData.forEach((item, index) => {
                 const wrapper = document.createElement('div');
                 wrapper.className = 'journal-card-wrapper';
                 wrapper.setAttribute('data-date', item.date);
                 
-                let showDateLabel = (item.date !== lastDate);
-                lastDate = item.date;
+                // 【优化2】：倒序时，顶部的“最新照片”不带时间标注；
+                // 只有当它是该日期组的最底部一张（即下一张照片的日期改变或到达最底）时才显示日期/时间点
+                const nextItem = journalData[index + 1];
+                let showDateLabel = (!nextItem || nextItem.date !== item.date);
 
                 let timeLabelHtml = showDateLabel ? `<div class="timeline-label">${item.date}</div>` : '';
                 let dotHtml = showDateLabel ? `<div class="timeline-dot"></div>` : '';
