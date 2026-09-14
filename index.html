@@ -22,6 +22,10 @@
             cursor: none;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
@@ -316,8 +320,8 @@
         /* 右侧展区铺满 */
         .content-area {
             flex: 1;
-            padding: 5rem 6rem 12rem 7rem;
-            max-width: 1700px;
+            padding: 5rem 4rem 12rem 5rem;
+            max-width: 1920px;
             animation: contentFadeIn 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
 
@@ -331,30 +335,38 @@
             letter-spacing: 0.35em;
             color: var(--text-sub);
             text-transform: uppercase;
-            margin-bottom: 3.5rem;
+            margin-bottom: 2.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-weight: 400;
         }
 
-        /* 瀑布流区 */
+        /* 2. 瀑布流区：图片缩小至约1/2（改为5列/6列），间隙变窄 */
         .masonry-grid {
-            columns: 3;
-            column-gap: 2rem;
+            columns: 5;
+            column-gap: 0.8rem;
+        }
+
+        @media (min-width: 1800px) {
+            .masonry-grid {
+                columns: 6;
+            }
         }
 
         .masonry-item {
             break-inside: avoid;
-            margin-bottom: 2rem;
+            margin-bottom: 0.8rem;
             background: transparent;
             opacity: 0;
             animation: itemFadeIn 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
 
-        .masonry-item:nth-child(3n+1) { animation-delay: 0.05s; }
-        .masonry-item:nth-child(3n+2) { animation-delay: 0.1s; }
-        .masonry-item:nth-child(3n+3) { animation-delay: 0.15s; }
+        .masonry-item:nth-child(5n+1) { animation-delay: 0.03s; }
+        .masonry-item:nth-child(5n+2) { animation-delay: 0.06s; }
+        .masonry-item:nth-child(5n+3) { animation-delay: 0.09s; }
+        .masonry-item:nth-child(5n+4) { animation-delay: 0.12s; }
+        .masonry-item:nth-child(5n+5) { animation-delay: 0.15s; }
 
         @keyframes itemFadeIn {
             from { opacity: 0; transform: translateY(15px); }
@@ -372,7 +384,7 @@
 
         .masonry-item:hover .masonry-img {
             filter: grayscale(0%) brightness(1);
-            transform: scale(1.015);
+            transform: scale(1.02);
         }
 
         /* 独立札记展厅：精确对齐时间轴与右移明信片 */
@@ -396,6 +408,7 @@
             margin-bottom: 10rem;
             opacity: 0;
             animation: itemFadeIn 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            scroll-margin-top: 6rem; /* 锚点定位留白 */
         }
 
         .timeline-dot {
@@ -406,34 +419,32 @@
             height: 7px;
             background-color: var(--accent-bronze);
             border-radius: 50%;
-            transform: translateX(-3px); /* 水平居中咬合在竖线上 */
+            transform: translateX(-3px);
             box-shadow: 0 0 8px var(--accent-bronze);
             z-index: 3;
         }
 
         .timeline-label {
             position: absolute;
-            left: -3rem; /* 放在时间轴左侧 */
+            left: -3rem;
             top: 2rem;
-font-size: 0.65rem;
-  letter-spacing: 0.15em;
-  color: var(--text-sub);
-  text-align: right;
-  width: auto; /* 清除固定宽度以防换行或对齐偏差 */
-  font-weight: 400;
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            color: var(--text-sub);
+            text-align: right;
+            width: auto;
+            font-weight: 400;
+            transform: translate(calc(-100% - 8px), 8px); 
+        }
 
-  /* 向左平移自身100%，并向下适当偏移 */
-  transform: translate(calc(-100% - 8px), 8px); 
-}
-
-        /* 札记区明信片：复古泛黄边框，整体往右挪开与时间轴拉开距离，同时尺寸可以适当放大 */
+        /* 札记区明信片 */
         .postcard-frame {
             background-color: #f7f3ea; 
             border: 1px solid #dcd4c1;
             padding: 1.4rem;
             box-shadow: 0 25px 60px rgba(0,0,0,0.5), inset 0 0 30px rgba(197, 160, 89, 0.05);
             width: 90%; 
-            margin-left: 6rem; /* 整体往右挪，与左侧时间轴和时间标记拉开舒适的呼吸感，且照片空间更大 */
+            margin-left: 6rem;
             transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.5s ease;
         }
 
@@ -471,7 +482,6 @@ font-size: 0.65rem;
             gap: 2rem;
         }
 
-        /* 左下角 note 部分改为金铜色 */
         .postcard-note {
             font-size: 0.85rem;
             letter-spacing: 0.1em;
@@ -532,33 +542,49 @@ font-size: 0.65rem;
             transform: scale(0.97);
         }
 
+        /* 3. 点开大图之后的左右切换按钮：高级简约金铜色大角度箭头 */
         .lightbox-nav {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: #fff;
-            padding: 1.5rem 1rem;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: background 0.3s;
+            background: transparent;
+            border: none;
+            color: var(--accent-bronze);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3rem;
+            font-weight: 200;
+            padding: 2rem;
+            line-height: 1;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            opacity: 0.65;
+            text-shadow: 0 0 15px rgba(197, 160, 89, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .lightbox-nav:hover { background: rgba(255,255,255,0.15); }
-        .lightbox-prev { left: 2rem; }
-        .lightbox-next { right: 2rem; }
+        .lightbox-nav:hover {
+            opacity: 1;
+            transform: translateY(-50%) scale(1.15);
+            text-shadow: 0 0 25px rgba(197, 160, 89, 0.6);
+            color: #e5be75;
+        }
+
+        .lightbox-prev { left: 3rem; }
+        .lightbox-next { right: 3rem; }
 
         @media (max-width: 1024px) {
             .main-layout { flex-direction: column; }
             .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid #222; }
             .content-area { padding: 3rem 2rem; }
-            .masonry-grid { columns: 1; }
+            .masonry-grid { columns: 2; }
             .postcard-frame { width: 100%; margin-left: 0; }
             .journals-section { padding-left: 1.5rem; }
             .journals-section::before { left: 0.5rem; }
             .timeline-dot { left: 0.5rem; }
             .timeline-label { left: -4.5rem; }
+            .lightbox-prev { left: 1rem; }
+            .lightbox-next { right: 1rem; }
         }
     </style>
 </head>
@@ -607,6 +633,8 @@ font-size: 0.65rem;
                 <div class="filter-group" style="margin-top: 1.2rem;">
                     <div class="filter-title">EXHIBITION</div>
                     <button class="filter-item" id="journalsViewBtn" onclick="switchViewToJournals()">Journals & Notes</button>
+                    <!-- 1. 札记时间索引扩展容器 -->
+                    <div id="journalTimeIndexContainer"></div>
                 </div>
             </div>
 
@@ -622,9 +650,10 @@ font-size: 0.65rem;
 
     <!-- 影院级灯箱大图预览 -->
     <div id="lightbox" onclick="closeLightbox(event)">
-        <button class="lightbox-nav lightbox-prev" onclick="event.stopPropagation(); changeLightboxImg(-1)">❮</button>
+        <!-- 3. 高级简约金铜色大角度箭头切换按钮 -->
+        <button class="lightbox-nav lightbox-prev" onclick="event.stopPropagation(); changeLightboxImg(-1)">‹</button>
         <img id="lightboxImg" src="" alt="Zoomed view">
-        <button class="lightbox-nav lightbox-next" onclick="event.stopPropagation(); changeLightboxImg(1)">❯</button>
+        <button class="lightbox-nav lightbox-next" onclick="event.stopPropagation(); changeLightboxImg(1)">›</button>
     </div>
 
     <script>
@@ -636,6 +665,39 @@ font-size: 0.65rem;
         
         let lightboxImages = [];
         let lightboxCurrentIndex = 0;
+
+        // 4. 平滑惯性滚轮交互逻辑
+        let currentScrollY = window.scrollY;
+        let targetScrollY = window.scrollY;
+        let isSmoothScrolling = false;
+
+        window.addEventListener('wheel', (e) => {
+            const box = document.getElementById('lightbox');
+            if (box && box.style.display === 'flex') return; // 灯箱开启时不拦截
+
+            e.preventDefault();
+            targetScrollY += e.deltaY * 0.85; // 调整滚轮敏感度与拉伸感
+            targetScrollY = Math.max(0, Math.min(targetScrollY, document.documentElement.scrollHeight - window.innerHeight));
+
+            if (!isSmoothScrolling) {
+                requestAnimationFrame(updateSmoothScroll);
+            }
+        }, { passive: false });
+
+        function updateSmoothScroll() {
+            isSmoothScrolling = true;
+            const diff = targetScrollY - currentScrollY;
+            currentScrollY += diff * 0.085; // 惯性系数，越小越丝滑缓动
+
+            window.scrollTo(0, currentScrollY);
+
+            if (Math.abs(diff) > 0.5) {
+                requestAnimationFrame(updateSmoothScroll);
+            } else {
+                isSmoothScrolling = false;
+                currentScrollY = targetScrollY;
+            }
+        }
 
         // 点击产生优雅缓慢的微型星座连线特效
         document.addEventListener('mousedown', (e) => {
@@ -666,6 +728,11 @@ font-size: 0.65rem;
 
         // 滚动监听
         window.addEventListener('scroll', () => {
+            if (!isSmoothScrolling) {
+                currentScrollY = window.scrollY;
+                targetScrollY = window.scrollY;
+            }
+
             const header = document.getElementById('siteHeader');
             const backToTop = document.getElementById('backToTopBtn');
             let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -684,6 +751,7 @@ font-size: 0.65rem;
         });
 
         function scrollToTop() {
+            targetScrollY = 0;
             window.scrollTo({
                 top: 0,
                 behavior: 'smooth'
@@ -851,6 +919,7 @@ font-size: 0.65rem;
                 lBtn.innerText = loc;
                 lBtn.onclick = () => {
                     isJournalsView = false;
+                    clearJournalTimeIndex();
                     document.getElementById('journalsViewBtn').classList.remove('active');
                     document.getElementById('allWorksBtn').classList.remove('active');
 
@@ -868,8 +937,92 @@ font-size: 0.65rem;
             });
         }
 
+        // 1. 构建札记区的时间索引（年份与月份二级联动）
+        function buildJournalTimeIndex() {
+            const container = document.getElementById('journalTimeIndexContainer');
+            container.innerHTML = '';
+
+            const journalData = allData.filter(item => item.journal);
+            const journalYearMap = {};
+
+            journalData.forEach(item => {
+                const y = item.year || item.date.split('.')[0];
+                const m = item.month || item.date.split('.')[1] || '01';
+                if (!journalYearMap[y]) journalYearMap[y] = new Set();
+                journalYearMap[y].add(m);
+            });
+
+            const subContainer = document.createElement('div');
+            subContainer.style.paddingLeft = '0.8rem';
+            subContainer.style.marginTop = '0.5rem';
+            subContainer.style.borderLeft = '1px solid rgba(197, 160, 89, 0.2)';
+
+            Object.keys(journalYearMap).sort().reverse().forEach(year => {
+                const yWrapper = document.createElement('div');
+                
+                const yBtn = document.createElement('button');
+                yBtn.className = 'filter-item';
+                yBtn.style.fontSize = '0.7rem';
+                yBtn.innerText = year;
+                
+                const mContainer = document.createElement('div');
+                mContainer.className = 'sub-months';
+                mContainer.style.display = 'none';
+
+                Array.from(journalYearMap[year]).sort().reverse().forEach(month => {
+                    const mBtn = document.createElement('button');
+                    mBtn.className = 'month-btn';
+                    mBtn.innerText = month;
+                    mBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        scrollToJournalTarget(year, month);
+                    };
+                    mContainer.appendChild(mBtn);
+                });
+
+                yBtn.onclick = () => {
+                    const isVisible = mContainer.style.display === 'flex';
+                    subContainer.querySelectorAll('.sub-months').forEach(el => el.style.display = 'none');
+                    if (!isVisible) {
+                        mContainer.style.display = 'flex';
+                        scrollToJournalTarget(year, null);
+                    }
+                };
+
+                yWrapper.appendChild(yBtn);
+                yWrapper.appendChild(mContainer);
+                subContainer.appendChild(yWrapper);
+            });
+
+            container.appendChild(subContainer);
+        }
+
+        function clearJournalTimeIndex() {
+            const container = document.getElementById('journalTimeIndexContainer');
+            if (container) container.innerHTML = '';
+        }
+
+        function scrollToJournalTarget(year, month) {
+            let targetEl = null;
+            if (month) {
+                targetEl = document.querySelector(`.journal-card-wrapper[data-date^="${year}.${month}"]`);
+            }
+            if (!targetEl) {
+                targetEl = document.querySelector(`.journal-card-wrapper[data-date^="${year}"]`);
+            }
+            if (targetEl) {
+                const targetPos = targetEl.getBoundingClientRect().top + window.pageYOffset - 80;
+                targetScrollY = targetPos;
+                window.scrollTo({
+                    top: targetPos,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
         function toggleYear(year, months, wrapperElement) {
             isJournalsView = false;
+            clearJournalTimeIndex();
             document.getElementById('journalsViewBtn').classList.remove('active');
             document.getElementById('allWorksBtn').classList.remove('active');
 
@@ -922,6 +1075,7 @@ font-size: 0.65rem;
             selectedMonth = null;
             selectedLocation = null;
 
+            clearJournalTimeIndex();
             document.querySelectorAll('.filter-item, .month-btn').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.sub-months').forEach(el => el.remove());
             document.getElementById('allWorksBtn').classList.add('active');
@@ -930,9 +1084,15 @@ font-size: 0.65rem;
 
         function switchViewToJournals() {
             isJournalsView = true;
+            selectedYear = null;
+            selectedMonth = null;
+            selectedLocation = null;
+
             document.querySelectorAll('.filter-item, .month-btn').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.sub-months').forEach(el => el.remove());
             document.getElementById('journalsViewBtn').classList.add('active');
+            
+            buildJournalTimeIndex();
             renderContentWithAnim();
         }
 
@@ -1011,6 +1171,7 @@ font-size: 0.65rem;
             journalData.forEach((item, index) => {
                 const wrapper = document.createElement('div');
                 wrapper.className = 'journal-card-wrapper';
+                wrapper.setAttribute('data-date', item.date);
                 
                 let showDateLabel = (item.date !== lastDate);
                 lastDate = item.date;
