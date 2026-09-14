@@ -12,6 +12,7 @@
             --text-main: #f0ebe1;
             --text-sub: #7a756b;
             --accent-bronze: #c5a059;
+            --accent-bronze-dark: #a8823d; /* 加深后的金铜色，用于 note 和右下角时间 */
             --border-color: #1a1a1a;
         }
 
@@ -375,16 +376,16 @@
             transform: scale(1.015);
         }
 
-        /* 独立札记展厅：精确对齐时间轴与右移明信片 */
+        /* 独立札记展厅：时间轴线固定在 left: 4rem 处 */
         .journals-section {
             position: relative;
-            padding-left: 3rem; /* 轴线位于左侧 3rem 处 */
+            padding-left: 7rem; /* 给左侧时间与圆点留出宽敞的空间 */
         }
 
         .journals-section::before {
             content: '';
             position: absolute;
-            left: 3rem; /* 绝对定位时间轴竖线 */
+            left: 4rem; /* 轴线竖线位置 */
             top: 1rem;
             bottom: 1rem;
             width: 1px;
@@ -400,37 +401,37 @@
 
         .timeline-dot {
             position: absolute;
-            left: 3rem; /* 严格与竖线 left: 3rem 重合 */
+            left: 4rem; /* 绝对精准落在轴线竖线上 (left: 4rem) */
             top: 2rem;
             width: 7px;
             height: 7px;
             background-color: var(--accent-bronze);
             border-radius: 50%;
-            transform: translateX(-3.5px); /* 水平居中咬合在竖线上 */
+            transform: translateX(-3.5px); /* 居中咬合竖线 */
             box-shadow: 0 0 8px var(--accent-bronze);
             z-index: 3;
         }
 
         .timeline-label {
             position: absolute;
-            left: -2rem; /* 放在时间轴左侧 */
-            top: 1.85rem;
+            left: -1rem; /* 放在圆点的左下方附近 */
+            top: 2.3rem;
             font-size: 0.65rem;
-            letter-spacing: 0.15em;
+            letter-spacing: 0.1em;
             color: var(--text-sub);
             text-align: right;
             width: 4.5rem;
             font-weight: 400;
         }
 
-        /* 札记区明信片：复古泛黄边框，整体往右挪开与时间轴拉开距离，同时尺寸可以适当放大 */
+        /* 札记区明信片：整体再向右推开，与时间轴保持完美距离 */
         .postcard-frame {
             background-color: #f7f3ea; 
             border: 1px solid #dcd4c1;
-            padding: 1.4rem;
+            padding: 1.5rem;
             box-shadow: 0 25px 60px rgba(0,0,0,0.5), inset 0 0 30px rgba(197, 160, 89, 0.05);
             width: 90%; 
-            margin-left: 5rem; /* 整体往右挪，与左侧时间轴和时间标记拉开舒适的呼吸感，且照片空间更大 */
+            margin-left: 2rem; /* 整体再往右偏移，排版呼吸感拉满 */
             transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.5s ease;
         }
 
@@ -468,13 +469,14 @@
             gap: 2rem;
         }
 
-        /* 左下角 note 部分改为金铜色 */
+        /* 左下角 note：加深颜色，更有质感 */
         .postcard-note {
             font-size: 0.85rem;
             letter-spacing: 0.1em;
-            color: var(--accent-bronze);
+            color: var(--accent-bronze-dark);
             line-height: 1.7;
             font-style: italic;
+            font-weight: 500;
         }
 
         .postcard-info {
@@ -484,13 +486,19 @@
             gap: 0.3rem;
             font-size: 0.7rem;
             letter-spacing: 0.15em;
-            color: var(--text-sub);
             flex-shrink: 0;
             font-weight: 400;
         }
 
+        /* 地点：纯黑色 */
         .info-loc {
-            color: var(--accent-bronze);
+            color: #111111;
+            font-weight: 600;
+        }
+
+        /* 时间：颜色改成和 note 一样的加深金铜色 */
+        .info-date {
+            color: var(--accent-bronze-dark);
             font-weight: 500;
         }
 
@@ -555,7 +563,7 @@
             .journals-section { padding-left: 1.5rem; }
             .journals-section::before { left: 0.5rem; }
             .timeline-dot { left: 0.5rem; }
-            .timeline-label { left: -4.5rem; }
+            .timeline-label { left: -3.5rem; top: 1.8rem; }
         }
     </style>
 </head>
@@ -634,7 +642,6 @@
         let lightboxImages = [];
         let lightboxCurrentIndex = 0;
 
-        // 点击产生优雅缓慢的微型星座连线特效
         document.addEventListener('mousedown', (e) => {
             createConstellationBurst(e.clientX, e.clientY);
         });
@@ -661,7 +668,6 @@
             });
         }
 
-        // 滚动监听
         window.addEventListener('scroll', () => {
             const header = document.getElementById('siteHeader');
             const backToTop = document.getElementById('backToTopBtn');
@@ -687,7 +693,6 @@
             });
         }
 
-        // 光标跟随
         const cursor = document.getElementById('customCursor');
         document.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px';
@@ -706,7 +711,6 @@
             }
         });
 
-        // 背景粒子与星座连线系统
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
         let ambientParticles = [];
@@ -1027,7 +1031,7 @@
                             ${noteHtml}
                             <div class="postcard-info">
                                 <span class="info-loc">${item.location}</span>
-                                <span>${item.date}</span>
+                                <span class="info-date">${item.date}</span>
                             </div>
                         </div>
                     </div>
