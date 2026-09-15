@@ -341,16 +341,6 @@
   },
   {
     "id": 35,
-    "url": "photos/IMG_1163-2.jpg",
-    "location": "上海",
-    "date": "2023.12",
-    "year": "2023",
-    "month": "12",
-    "journal": true,
-    "note": "小羊……太可爱。"
-  },
-  {
-    "id": 36,
     "url": "photos/IMG_1179-2.jpg",
     "location": "上海",
     "date": "2023.12",
@@ -360,7 +350,7 @@
     "note": ""
   },
   {
-    "id": 37,
+    "id": 36,
     "url": "photos/IMG_1183-2.jpg",
     "location": "上海",
     "date": "2023.12",
